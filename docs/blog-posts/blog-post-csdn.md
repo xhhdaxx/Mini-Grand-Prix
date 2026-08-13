@@ -81,11 +81,11 @@
 
 | 主菜单 + 3D 地球选站 | 比赛设置 |
 |:---:|:---:|
-| ![主菜单与 3D 地球](../Web_Pictures_Material/CN/1-home.png) | ![比赛设置](../Web_Pictures_Material/CN/3-race-setup.png) |
+| ![主菜单与 3D 地球](../../Web_Pictures_Material/CN/1-home.png) | ![比赛设置](../../Web_Pictures_Material/CN/3-race-setup.png) |
 | **赛道详情** | **赛车调校** |
-| ![赛道详情](../Web_Pictures_Material/CN/2-track-selection.png) | ![赛车调校](../Web_Pictures_Material/CN/4-car-setup.png) |
+| ![赛道详情](../../Web_Pictures_Material/CN/2-track-selection.png) | ![赛车调校](../../Web_Pictures_Material/CN/4-car-setup.png) |
 | **生涯与排行榜** | **完整规则说明** |
-| ![生涯与排行榜](../Web_Pictures_Material/CN/5-career-results.png) | ![完整规则](../Web_Pictures_Material/CN/6-rules-1.png) |
+| ![生涯与排行榜](../../Web_Pictures_Material/CN/5-career-results.png) | ![完整规则](../../Web_Pictures_Material/CN/6-rules-1.png) |
 
 整个流程可以概括成一句话：
 
@@ -416,7 +416,7 @@ npm run start:gamepad
 **发布建议**：
 
 1. 先把上面 6 张本地 PNG 用 CSDN 编辑器的"上传图片"功能传一遍
-2. 把 Markdown 中所有 `../Web_Pictures_Material/CN/xxx.png` 替换为 CSDN 返回的图片 URL
+2. 把 Markdown 中所有 `../../Web_Pictures_Material/CN/xxx.png` 替换为 CSDN 返回的图片 URL
 3. 删除文末"CSDN 发布小贴士"这一节
 4. 推荐标签：`前端` `JavaScript` `HTML5` `Canvas` `游戏开发` `开源项目` `赛车游戏`
 5. 推荐封面图：`Web_Pictures_Material/CN/1-home.png`（主菜单 + 3D 地球）
