@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/Build-none-19c37d?style=for-the-badge" alt="No build step" />
 </p>
 
-<img src="Web_Pictures_Material/CN/1-home.png" width="100%" alt="Mini Grand Prix 中文主菜单与三维地球选站界面" />
+<a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/home-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/home-preview.gif" width="100%" alt="Mini Grand Prix 主菜单与三维地球选站界面 20 秒循环预览" /></a>
 
 如果你喜欢“容易上手，但每一圈都有决策”的赛车游戏，欢迎点一个 **Star ⭐**。
 

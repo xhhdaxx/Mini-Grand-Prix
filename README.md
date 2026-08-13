@@ -19,7 +19,7 @@ No game engine, no frontend framework, no build step—just driving, tyres, weat
   <img src="https://img.shields.io/badge/Build-none-19c37d?style=for-the-badge" alt="No build step" />
 </p>
 
-<img src="Web_Pictures_Material/EN/1-home.png" width="100%" alt="Mini Grand Prix English main menu with the interactive 3D globe" />
+<a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/home-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/home-preview.gif" width="100%" alt="20-second looping Mini Grand Prix home and circuit-selection gameplay preview" /></a>
 
 If you enjoy racing games that are easy to pick up but make every lap a decision, consider leaving a **Star ⭐**.
 
