@@ -27,7 +27,7 @@ No game engine, no frontend framework, no build step—just driving, tyres, weat
 
 <a href="https://xhhdaxx.github.io/Mini-Grand-Prix/showcase/gameplay.html"><img src="Web_Pictures_Material/EN/1-home.png" width="100%" alt="Open the autoplaying Mini Grand Prix gameplay showcase" /></a>
 
-If you enjoy racing games that are easy to pick up but make every lap a decision, consider leaving a **Star ⭐**.
+👆 **Click the image above to watch the actual gameplay video.**
 
 [Quick Start](#-quick-start) · [Features](#-features) · [Controls](#-controls) · [Architecture](#-technical-overview) · [Contributing](#-contributing)
 
@@ -74,15 +74,21 @@ Alongside the full Grand Prix weekend, you can run a solo time trial. In gamepad
 | **Car setup** | **Career and results** |
 | <img src="Web_Pictures_Material/EN/4-car-setup.png" alt="Vehicle presets and performance tuning" /> | <img src="Web_Pictures_Material/EN/5-career-results.png" alt="Championship standings and circuit records" /> |
 
+### 📱 Phone controller
+
+Turn your phone into a wireless gamepad — scan a QR code, connect over local Wi-Fi, and race head-to-head with a friend in split screen. P1 can always fall back to the keyboard.
+
+<p align="center">
+  <img src="Web_Pictures_Material/EN/7-phone-controller.png" width="60%" alt="English phone controller interface" />
+</p>
+
 <details>
-<summary><strong>See the full rules screens and phone controller</strong></summary>
+<summary><strong>See the full rules screens</strong></summary>
 
 <p align="center">
   <img src="Web_Pictures_Material/EN/6-rules-1.png" width="49%" alt="Full rules screen, part one" />
   <img src="Web_Pictures_Material/EN/6-rules-2.png" width="49%" alt="Full rules screen, part two" />
 </p>
-
-<img src="Web_Pictures_Material/EN/7-phone-controller.png" width="100%" alt="English phone controller interface" />
 
 </details>
 
@@ -107,14 +113,34 @@ GIF previews loop automatically; click one to watch the full clip. Both previews
 
 ## 🌍 24 rounds, 6 fictional teams
 
-<details>
-<summary><strong>Expand the 2026 calendar</strong></summary>
+The 2026 calendar spans Asia-Pacific, Europe, the Americas, and the Middle East. Each circuit is hand-built as a **simplified artistic interpretation** inspired by real-world geography — not a survey-accurate reproduction. Corner counts, radii, lengths, and layouts differ from their real-world counterparts.
 
-Australia, Shanghai, Bahrain, Saudi Arabia, Miami, Canada, Monaco, Spain, Austria, Great Britain, Germany, Belgium, Hungary, the Netherlands, Italy, Azerbaijan, Malaysia, Singapore, Austin, Mexico, Brazil, Las Vegas, Qatar, and Abu Dhabi.
-
-> Circuits are hand-built, **simplified artistic interpretations** inspired by real-world geography—not survey-accurate reproductions. Corner counts, radii, lengths, and layouts differ from their real-world counterparts.
-
-</details>
+| # | Round | Layout | Turns | Length | Region |
+|:---:|:---|:---|:---:|:---:|:---|
+| 1 | 🇦🇺 Australia | Albert Park | 14 | 5.278 km | Asia-Pacific |
+| 2 | 🇨🇳 Shanghai | Shanghai | 16 | 5.451 km | Asia-Pacific |
+| 3 | 🇧🇭 Bahrain | Sakhir | 15 | 5.412 km | Middle East |
+| 4 | 🇸🇦 Jeddah | Jeddah | 27 | 6.174 km | Middle East |
+| 5 | 🇺🇸 Miami | Miami | 19 | 5.412 km | Americas |
+| 6 | 🇨🇦 Canada | Montréal | 14 | 4.361 km | Americas |
+| 7 | 🇲🇨 Monaco | Monte Carlo | 19 | 3.337 km | Europe |
+| 8 | 🇪🇸 Spain | Barcelona-Catalunya | 16 | 4.675 km | Europe |
+| 9 | 🇦🇹 Austria | Spielberg | 10 | 4.318 km | Europe |
+| 10 | 🇬🇧 Great Britain | Silverstone | 18 | 5.891 km | Europe |
+| 11 | 🇩🇪 Germany | Hockenheimring | 17 | 4.574 km | Europe |
+| 12 | 🇧🇪 Belgium | Spa-Francorchamps | 20 | 7.004 km | Europe |
+| 13 | 🇭🇺 Hungary | Hungaroring | 14 | 4.381 km | Europe |
+| 14 | 🇳🇱 Netherlands | Zandvoort | 14 | 4.259 km | Europe |
+| 15 | 🇮🇹 Italy | Monza | 11 | 5.793 km | Europe |
+| 16 | 🇦🇿 Azerbaijan | Baku | 20 | 6.003 km | Middle East |
+| 17 | 🇲🇾 Malaysia | Sepang | 15 | 5.543 km | Asia-Pacific |
+| 18 | 🇸🇬 Singapore | Marina Bay | 23 | 5.063 km | Asia-Pacific |
+| 19 | 🇺🇸 Austin | Austin | 20 | 5.513 km | Americas |
+| 20 | 🇲🇽 Mexico | Mexico City | 17 | 4.304 km | Americas |
+| 21 | 🇧🇷 Brazil | Interlagos | 15 | 4.309 km | Americas |
+| 22 | 🇺🇸 Las Vegas | Las Vegas Strip | 17 | 6.201 km | Americas |
+| 23 | 🇶🇦 Qatar | Lusail | 16 | 5.419 km | Middle East |
+| 24 | 🇦🇪 Abu Dhabi | Yas Marina | 16 | 5.281 km | Middle East |
 
 | Team | Number | Character |
 |:---|:---:|:---|
