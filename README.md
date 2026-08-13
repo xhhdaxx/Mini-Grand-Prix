@@ -82,15 +82,15 @@ Mini Grand Prix 把方程式赛车最迷人的部分压缩到一次紧凑的浏�
 
 ### 赛道实录
 
-点击封面观看完整实录。视频作为 [GitHub Release](https://github.com/xhhdaxx/Mini-Grand-Prix/releases/tag/gameplay-v1) 附件托管，不会增加仓库克隆体积。
+GIF 预览会自动循环；点击预览即可观看完整实录。GIF 与视频均作为 [GitHub Release](https://github.com/xhhdaxx/Mini-Grand-Prix/releases/tag/gameplay-v1) 附件托管，不会增加仓库克隆体积。
 
 | 上海 | 迈阿密 |
 |:---:|:---:|
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/shanghai.webp" alt="上海赛道实录封面" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/miami.webp" alt="迈阿密赛道实录封面" /></a> |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-preview.gif" alt="上海赛道自动循环预览" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-preview.gif" alt="迈阿密赛道自动循环预览" /></a> |
 | **奥地利** | **巴塞罗那** |
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/austria.webp" alt="奥地利赛道实录封面" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/barcelona.webp" alt="巴塞罗那赛道实录封面" /></a> |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-preview.gif" alt="奥地利赛道自动循环预览" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-preview.gif" alt="巴塞罗那赛道自动循环预览" /></a> |
 | **卢赛尔** | **亚斯码头** |
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/lusail.webp" alt="卢赛尔赛道实录封面" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/yas-marina.webp" alt="亚斯码头赛道实录封面" /></a> |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-preview.gif" alt="卢赛尔赛道自动循环预览" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-preview.gif" alt="亚斯码头赛道自动循环预览" /></a> |
 
 ## 🧠 每一圈都有决策
 

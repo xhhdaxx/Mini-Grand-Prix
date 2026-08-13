@@ -82,15 +82,15 @@ Alongside the full Grand Prix weekend, you can run a solo time trial. In gamepad
 
 ### Circuit footage
 
-Click a cover to watch the full clip. Videos are hosted as [GitHub Release](https://github.com/xhhdaxx/Mini-Grand-Prix/releases/tag/gameplay-v1) assets, keeping them out of repository clones.
+GIF previews loop automatically; click one to watch the full clip. Both previews and videos are hosted as [GitHub Release](https://github.com/xhhdaxx/Mini-Grand-Prix/releases/tag/gameplay-v1) assets, keeping them out of repository clones.
 
 | Shanghai | Miami |
 |:---:|:---:|
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/shanghai.webp" alt="Shanghai gameplay video cover" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/miami.webp" alt="Miami gameplay video cover" /></a> |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-preview.gif" alt="Looping Shanghai gameplay preview" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-preview.gif" alt="Looping Miami gameplay preview" /></a> |
 | **Spielberg** | **Barcelona** |
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/austria.webp" alt="Spielberg gameplay video cover" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/barcelona.webp" alt="Barcelona gameplay video cover" /></a> |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-preview.gif" alt="Looping Spielberg gameplay preview" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-preview.gif" alt="Looping Barcelona gameplay preview" /></a> |
 | **Lusail** | **Yas Marina** |
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/lusail.webp" alt="Lusail gameplay video cover" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-gameplay.mp4"><img src="Web_Pictures_Material/gameplay-covers/yas-marina.webp" alt="Yas Marina gameplay video cover" /></a> |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-preview.gif" alt="Looping Lusail gameplay preview" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-preview.gif" alt="Looping Yas Marina gameplay preview" /></a> |
 
 ## 🧠 Every lap is a decision
 
