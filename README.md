@@ -2,14 +2,14 @@
 
 # 🏁 Mini Grand Prix
 
-### 一台能在浏览器里打开的卡通方程式大奖赛
+### A cartoon formula racing weekend in your browser
 
-**排位。竞速。应变。夺冠。**
+**Qualify. Race. Adapt. Win.**
 
-用原生 HTML、JavaScript 与 Canvas 2D 打造的策略竞速游戏。<br>
-没有游戏引擎，没有前端框架，没有构建步骤——只有驾驶、轮胎、天气、ERS 和进站策略。
+A strategy racing game built with native HTML, JavaScript, and Canvas 2D.<br>
+No game engine, no frontend framework, no build step—just driving, tyres, weather, ERS, and pit strategy.
 
-[English](README_EN.md) · **简体中文**
+**English** · [简体中文](README_CN.md)
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-f5c518?style=for-the-badge" alt="MIT License" /></a>
@@ -19,235 +19,235 @@
   <img src="https://img.shields.io/badge/Build-none-19c37d?style=for-the-badge" alt="No build step" />
 </p>
 
-<img src="Web_Pictures_Material/CN/1-home.png" width="100%" alt="Mini Grand Prix 中文主菜单与三维地球选站界面" />
+<img src="Web_Pictures_Material/EN/1-home.png" width="100%" alt="Mini Grand Prix English main menu with the interactive 3D globe" />
 
-如果你喜欢“容易上手，但每一圈都有决策”的赛车游戏，欢迎点一个 **Star ⭐**。
+If you enjoy racing games that are easy to pick up but make every lap a decision, consider leaving a **Star ⭐**.
 
-[快速开始](#-快速开始) · [游戏特色](#-游戏特色) · [操作方式](#-操作方式) · [技术实现](#-技术实现) · [参与贡献](#-参与贡献)
+[Quick Start](#-quick-start) · [Features](#-features) · [Controls](#-controls) · [Architecture](#-technical-overview) · [Contributing](#-contributing)
 
 </div>
 
 ---
 
-## 🎮 一个完整的迷你比赛周末
+## 🎮 A complete miniature race weekend
 
-> **从 3D 地球选择赛道 → 调校赛车 → 一圈排位 → 三圈正赛 → 积分与下一站**
+> **Pick a circuit on the 3D globe → Tune the car → One-lap qualifying → Three-lap race → Points and the next round**
 
-Mini Grand Prix 把方程式赛车最迷人的部分压缩到一次紧凑的浏览器比赛中。你会与 5 辆 AI 赛车同场争夺排名，也要管理轮胎、ERS、天气和进站窗口。速度很重要，但真正决定方格旗落下时排名的，往往是下一个弯、下一片雨云和下一次进站。
+Mini Grand Prix compresses the best parts of formula racing into a compact browser session. You race five AI cars while managing tyres, ERS, changing weather, and your pit window. Raw speed matters, but the next corner, the next rain cloud, and the next pit call often decide where you finish.
 
-除了完整的大奖赛周末，还可以进行单人计时挑战；在手机手柄模式下，两位玩家还能通过各自的手机参加排位与分屏对决。
+Alongside the full Grand Prix weekend, you can run a solo time trial. In gamepad mode, two players can also connect their own phones for qualifying and a split-screen head-to-head race.
 
-## 🔥 游戏特色
+## 🔥 Features
 
-| 赛道上 | 驾驶舱里 | 策略台上 |
+| On track | In the cockpit | On the pit wall |
 |:---|:---|:---|
-| 🏎️ **六车竞速**：玩家与 5 辆 AI 同场争夺排名 | ⚡ **ERS**：主动放电、制动回收与冷却节奏 | 🌦️ **动态天气**：参考预报判断降雨与换胎时机 |
-| 🌍 **24 条参考赛道**：从可拖动的 3D 地球上选站 | 🛞 **轮胎模型**：配方、温度、磨损与干湿地适配 | 🔧 **独立维修区**：进出站路线、车队 P 房、限速与安全释放 |
-| 🏁 **排位 + 正赛**：一圈定发车位，三圈定胜负 | 💨 **可读物理**：锁胎、碰撞、倒车与不同路面限速 | 📡 **比赛控制**：黄旗、罚时、越界与实时排名 |
-| 🏆 **24 站生涯**：积分、胜场、历史冠军与本地排行榜 | 🎛️ **性能调校**：四种预设与受预算约束的自定义设置 | 📱 **手机手柄**：局域网扫码连接，支持双人分屏对决 |
-| 🌐 **双语界面**：游戏内随时切换简体中文和英文 | 📦 **零构建前端**：浏览器直接加载原生 ES Module | 💾 **本地存档**：成绩、设置与赛季进度保存在浏览器中 |
+| 🏎️ **Six-car racing**: battle five AI opponents for position | ⚡ **ERS management**: deploy, harvest under braking, and manage cooldown | 🌦️ **Dynamic weather**: read the forecast and time the tyre change |
+| 🌍 **24 circuit interpretations**: choose a round on a draggable 3D globe | 🛞 **Tyre model**: compound, temperature, wear, and wet-weather suitability | 🔧 **Dedicated pit lanes**: entry, exit, team boxes, speed limit, and safe release |
+| 🏁 **Qualifying + race**: one lap sets the grid; three laps settle the result | 💨 **Readable physics**: lock-ups, collisions, reversing, and surface speed limits | 📡 **Race control**: yellow flags, penalties, track limits, and live classification |
+| 🏆 **24-round career**: points, wins, past champions, and local leaderboards | 🎛️ **Performance tuning**: four presets plus budget-limited custom setup | 📱 **Phone controllers**: join over LAN and race head-to-head in split screen |
+| 🌐 **Bilingual UI**: switch between English and Simplified Chinese in-game | 📦 **Build-free frontend**: the browser loads native ES Modules directly | 💾 **Local saves**: results, setup, and season progress stay in your browser |
 
 <details>
-<summary><strong>更多比赛细节</strong></summary>
+<summary><strong>More race detail</strong></summary>
 
-- 软胎、中性胎、硬胎、半雨胎和全雨胎五种配方
-- 晴天、阴天、降雨和可提前预判的动态天气
-- 正赛强制进站换胎，未完成则在完赛后加罚 20 秒
-- 可调 AI 难度、天气、起步轮胎、车队和赛车设置
-- 抢跑、黄旗下超车、碰撞责任和累计越界处罚
-- 速度、挡位、转速、圈速、轮胎、天气、ERS、排名、赛道图和进站引导 HUD
-- 最快成绩、最近比赛、车辆设置和赛季进度均在本地容错保存
+- Soft, Medium, Hard, Intermediate, and Wet tyre compounds
+- Clear, overcast, rainy, and forecastable dynamic weather
+- A mandatory race pit stop; skipping the tyre change adds a 20-second penalty
+- Configurable AI difficulty, weather, starting tyres, team, and car setup
+- Jump starts, overtaking under yellow, collision responsibility, and cumulative track-limit penalties
+- HUD for speed, gear, RPM, lap times, tyres, weather, ERS, position, circuit map, and pit guidance
+- Fault-tolerant local storage for best results, recent races, vehicle setup, and season progress
 
 </details>
 
-## 🖼️ 游戏画面
+## 🖼️ Screenshots
 
-| 3D 地球选站 | 比赛设置与赛道预览 |
+| 3D globe and circuit selection | Race setup and circuit preview |
 |:---:|:---:|
-| <img src="Web_Pictures_Material/CN/2-track-selection.png" alt="赛道详情与 3D 地球" /> | <img src="Web_Pictures_Material/CN/3-race-setup.png" alt="车队、难度、天气和轮胎设置" /> |
-| **赛车调校** | **成绩与生涯** |
-| <img src="Web_Pictures_Material/CN/4-car-setup.png" alt="赛车预设与性能调校" /> | <img src="Web_Pictures_Material/CN/5-career-results.png" alt="赛季积分与赛道排行榜" /> |
+| <img src="Web_Pictures_Material/EN/2-track-selection.png" alt="Circuit details and the interactive globe" /> | <img src="Web_Pictures_Material/EN/3-race-setup.png" alt="Team, AI, weather, and starting tyre settings" /> |
+| **Car setup** | **Career and results** |
+| <img src="Web_Pictures_Material/EN/4-car-setup.png" alt="Vehicle presets and performance tuning" /> | <img src="Web_Pictures_Material/EN/5-career-results.png" alt="Championship standings and circuit records" /> |
 
 <details>
-<summary><strong>查看完整规则界面与手机手柄</strong></summary>
+<summary><strong>See the full rules screens and phone controller</strong></summary>
 
 <p align="center">
-  <img src="Web_Pictures_Material/CN/6-rules-1.png" width="49%" alt="完整规则界面第一部分" />
-  <img src="Web_Pictures_Material/CN/6-rules-2.png" width="49%" alt="完整规则界面第二部分" />
+  <img src="Web_Pictures_Material/EN/6-rules-1.png" width="49%" alt="Full rules screen, part one" />
+  <img src="Web_Pictures_Material/EN/6-rules-2.png" width="49%" alt="Full rules screen, part two" />
 </p>
 
-<img src="Web_Pictures_Material/CN/7-phone-controller.png" width="100%" alt="中文手机手柄操控界面" />
+<img src="Web_Pictures_Material/EN/7-phone-controller.png" width="100%" alt="English phone controller interface" />
 
 </details>
 
-### 赛道实录
+### Circuit footage
 
-GIF 预览会自动循环；点击预览即可观看完整实录。GIF 与视频均作为 [GitHub Release](https://github.com/xhhdaxx/Mini-Grand-Prix/releases/tag/gameplay-v1) 附件托管，不会增加仓库克隆体积。
+GIF previews loop automatically; click one to watch the full clip. Both previews and videos are hosted as [GitHub Release](https://github.com/xhhdaxx/Mini-Grand-Prix/releases/tag/gameplay-v1) assets, keeping them out of repository clones.
 
-| 上海 | 迈阿密 |
+| Race Start (Shanghai) | Cornering (Miami) |
 |:---:|:---:|
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-preview.gif" alt="上海赛道自动循环预览" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-preview.gif" alt="迈阿密赛道自动循环预览" /></a> |
-| **奥地利** | **巴塞罗那** |
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-preview.gif" alt="奥地利赛道自动循环预览" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-preview.gif" alt="巴塞罗那赛道自动循环预览" /></a> |
-| **卢赛尔** | **亚斯码头** |
-| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-preview.gif" alt="卢赛尔赛道自动循环预览" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-preview.gif" alt="亚斯码头赛道自动循环预览" /></a> |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/shanghai-preview.gif" alt="Looping race-start preview at Shanghai" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/miami-preview.gif" alt="Looping cornering preview at Miami" /></a> |
+| **ERS Acceleration (Austria)** | **Tyre Change (Barcelona)** |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/austria-preview.gif" alt="Looping ERS acceleration preview at Austria" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/barcelona-preview.gif" alt="Looping tyre-change preview at Barcelona" /></a> |
+| **AI Battle 1 (Lusail)** | **AI Battle 2 (Yas Marina)** |
+| <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/lusail-preview.gif" alt="Looping AI Battle 1 preview at Lusail" /></a> | <a href="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-gameplay.mp4"><img src="https://github.com/xhhdaxx/Mini-Grand-Prix/releases/download/gameplay-v1/yas-marina-preview.gif" alt="Looping AI Battle 2 preview at Yas Marina" /></a> |
 
-## 🧠 每一圈都有决策
+## 🧠 Every lap is a decision
 
-- **我现在该放电吗？** ERS 只能持续数秒，之后需要通过制动回收并等待冷却。
-- **雨还没下，要提前进站吗？** 预报会给你信息，但赛道位置和轮胎状态才决定答案。
-- **再撑一圈，还是保住轮胎？** 温度与磨损会直接改变抓地力和赛车表现。
-- **要快，也要守规则。** 黄旗、越界、碰撞责任和强制换胎都会影响最终成绩。
+- **Deploy now or save it?** ERS lasts only a few seconds before it needs brake harvesting and cooldown.
+- **Pit before the rain arrives?** The forecast gives you information; track position and tyre condition determine the answer.
+- **Stretch the stint or protect the rubber?** Temperature and wear directly affect grip and performance.
+- **Be quick—and stay clean.** Yellow flags, track limits, collision responsibility, and the mandatory tyre change can all reshape the result.
 
-## 🌍 24 站，6 支虚构车队
+## 🌍 24 rounds, 6 fictional teams
 
 <details>
-<summary><strong>展开 2026 赛历</strong></summary>
+<summary><strong>Expand the 2026 calendar</strong></summary>
 
-澳大利亚、上海、巴林、沙特阿拉伯、迈阿密、加拿大、摩纳哥、西班牙、奥地利、英国、德国、比利时、匈牙利、荷兰、意大利、阿塞拜疆、马来西亚、新加坡、美国奥斯汀、墨西哥、巴西、拉斯维加斯、卡塔尔与阿布扎比。
+Australia, Shanghai, Bahrain, Saudi Arabia, Miami, Canada, Monaco, Spain, Austria, Great Britain, Germany, Belgium, Hungary, the Netherlands, Italy, Azerbaijan, Malaysia, Singapore, Austin, Mexico, Brazil, Las Vegas, Qatar, and Abu Dhabi.
 
-> 赛道是根据现实地理走向手工制作的**简化艺术参考**，并非测绘复制。弯道数量、半径、长度与现实布局存在差异。
+> Circuits are hand-built, **simplified artistic interpretations** inspired by real-world geography—not survey-accurate reproductions. Corner counts, radii, lengths, and layouts differ from their real-world counterparts.
 
 </details>
 
-| 车队 | 车号 | 性能倾向 |
+| Team | Number | Character |
 |:---|:---:|:---|
-| Vector Cobalt | 12 | 平衡、易上手 |
-| Apex Saffron | 23 | 直道速度 |
-| Helix Indigo | 36 | 弯道表现 |
-| Orbit Vermilion | 17 | ERS 回收 |
-| Pulse Teal | 88 | 综合动力 |
-| Prism Onyx | 6 | 稳定性 |
+| Vector Cobalt | 12 | Balanced and approachable |
+| Apex Saffron | 23 | Straight-line speed |
+| Helix Indigo | 36 | Cornering performance |
+| Orbit Vermilion | 17 | ERS recovery |
+| Pulse Teal | 88 | All-round power |
+| Prism Onyx | 6 | Stability |
 
-所有车队、车号与涂装均为虚构内容。不同车队只有有限且公平的性能倾向，AI 与玩家共享相同的基础系统。
+All team identities, car numbers, and liveries are fictional. Performance differences are deliberately limited and fair, and AI cars share the same underlying systems as the player.
 
-## 🚀 快速开始
+## 🚀 Quick start
 
-### 环境要求
+### Requirements
 
 - Node.js 18+
-- 现代桌面浏览器（Chrome、Edge、Firefox 或 Safari）
-- 手机手柄模式需要电脑与手机处于同一局域网
+- A modern desktop browser: Chrome, Edge, Firefox, or Safari
+- For phone controllers, the computer and phones must share a local network
 
-### 安装与启动
+### Install and run
 
 ```bash
 npm install
 
-# 纯键盘模式
+# Keyboard-only mode
 npm run start:keyboard
 
-# 键盘 + 手机手柄模式（启用 WebSocket、二维码和双人入口）
+# Keyboard + phone controller mode (WebSocket, QR codes, and head-to-head)
 npm run start:gamepad
 ```
 
-在电脑浏览器中打开 <http://localhost:8080/>。
+Open <http://localhost:8080/> on the computer.
 
 > [!IMPORTANT]
-> 不要直接双击 `index.html`。浏览器通常会阻止 `file://` 页面加载 ES Module，请通过本地 HTTP 服务启动游戏。
+> Do not open `index.html` directly. Browsers commonly block ES Modules on `file://` pages, so start the local HTTP server first.
 
-### 连接手机手柄
+### Connect phone controllers
 
-1. 让电脑与手机连接同一个 Wi-Fi，或让电脑连接手机热点。
-2. 运行 `npm run start:gamepad`。
-3. 在电脑游戏页面扫描 P1 / P2 二维码，或在手机浏览器打开终端输出的局域网地址。
-4. 单人模式可用 P1 手机手柄；双人模式需要分别连接 P1 与 P2。
+1. Put the computer and phones on the same Wi-Fi network, or connect the computer to a phone hotspot.
+2. Run `npm run start:gamepad`.
+3. Scan the P1 / P2 QR code shown by the desktop game, or open one of the LAN addresses printed in the terminal.
+4. Use the P1 controller for single-player modes; connect P1 and P2 separately for head-to-head.
 
-P1 始终可以使用键盘作为后备输入。纯键盘模式不会启动 WebSocket、二维码或双人入口。
+P1 can always fall back to the keyboard. Keyboard-only mode does not expose the WebSocket service, QR codes, or head-to-head entry point.
 
-## 🎮 操作方式
+## 🎮 Controls
 
-| 按键 | 功能 | 按键 | 功能 |
+| Key | Action | Key | Action |
 |:---:|:---|:---:|:---|
-| `W` | 加速 | `D` | 制动 |
-| `←` / `→` | 转向 | `X` | 倒车 |
-| `Space` | ERS 放电 | `P` | 请求 / 取消进站 |
-| `1`–`5` | 选择下次进站轮胎 | `S` | 在所属 P 房急停 |
-| `Esc` | 暂停 | `R` | 结算后重新开始 |
+| `W` | Accelerate | `D` | Brake |
+| `←` / `→` | Steer | `X` | Reverse |
+| `Space` | Deploy ERS | `P` | Request / cancel pit stop |
+| `1`–`5` | Select the next pit tyre | `S` | Emergency stop in your team box |
+| `Esc` | Pause | `R` | Restart after the results screen |
 
-**自动速度保持**默认开启。松开 `W` 后赛车仍保持当前速度，可在“赛车设置”中关闭；制动、倒车或路面限速始终会使车辆减速。
+**Auto speed hold** is enabled by default: releasing `W` maintains the current speed. You can disable it in Car Setup. Braking, reversing, and surface limits still slow the car.
 
-## 🧰 技术实现
+## 🧰 Technical overview
 
 ```text
-浏览器原生 ES Modules
-├── Canvas 2D         赛道、赛车、环境与 HUD
-├── localStorage      成绩、生涯、设置与赛季进度
-└── Node.js + ws      本地静态服务与可选手机手柄
+Browser-native ES Modules
+├── Canvas 2D         Circuits, cars, scenery, and HUD
+├── localStorage      Results, career, setup, and season progress
+└── Node.js + ws      Local static server and optional phone controllers
 ```
 
-游戏前端运行时不依赖任何外部前端库，源码由浏览器原生加载，无需编译或打包。
+The game frontend has no external runtime library. The browser loads the source directly, with no compilation or bundling.
 
 <details>
-<summary><strong>展开项目结构</strong></summary>
+<summary><strong>Expand the project structure</strong></summary>
 
 ```text
-index.html                       页面入口与界面样式
-gamepad.html                     手机手柄页面
-src/main.js                      游戏循环与流程编排
-src/i18n.js                      中英文界面文案
-src/game/                        车辆、AI、赛道、比赛与策略系统
-src/renderer/                    赛道、赛车、环境与 HUD 渲染
-src/ui/                          菜单与 3D 地球选站
-src/utils/                       输入、数学、存档与导出
-src/gamepad/                     手机手柄 WebSocket 客户端
-server.js                        本地服务与 WebSocket 通道
-tests/run.js                     Node.js 功能测试入口
-tests/smoke.mjs                  Playwright 浏览器冒烟测试
-docs/prd.md                      产品需求与验收范围
-docs/track-authoring-standard.md 赛道设计与导入规范
-docs/pit-lane/README.md          维修区系统说明
+index.html                       Page entry point and UI styles
+gamepad.html                     Phone controller page
+src/main.js                      Game loop and flow orchestration
+src/i18n.js                      English and Chinese UI strings
+src/game/                        Cars, AI, circuits, race, and strategy systems
+src/renderer/                    Circuit, car, scenery, and HUD rendering
+src/ui/                          Menus and 3D globe selection
+src/utils/                       Input, maths, storage, and export helpers
+src/gamepad/                     Phone controller WebSocket client
+server.js                        Local server and WebSocket relay
+tests/run.js                     Node.js functional test entry point
+tests/smoke.mjs                  Playwright browser smoke test
+docs/prd.md                      Product requirements and acceptance scope
+docs/track-authoring-standard.md Circuit authoring and import standard
+docs/pit-lane/README.md          Pit lane system documentation
 ```
 
 </details>
 
-## ✅ 测试
+## ✅ Testing
 
 ```bash
-npm test          # 车辆、比赛、轮胎、ERS、天气、赛道、存档与本地化测试
+npm test          # Cars, races, tyres, ERS, weather, circuits, saves, and localization
 npm run lint      # ESLint
-npm run smoke     # Playwright 浏览器冒烟测试
+npm run smoke     # Playwright browser smoke test
 ```
 
-修改规则、物理、赛道几何或界面流程时，请同步补充测试并更新文档。
+When changing rules, physics, circuit geometry, or UI flows, update the relevant tests and documentation with the code.
 
-## 🤝 参与贡献
+## 🤝 Contributing
 
-欢迎提交 Issue、想法和 Pull Request。你可以从这些方向开始：
+Issues, ideas, and pull requests are welcome. Good places to start include:
 
-- 改善 AI 的超车、防守与雨战策略
-- 优化 Canvas 性能、窄屏 HUD 和可访问性
-- 设计符合几何规范的参考赛道
-- 补充物理、策略、存档容错、本地化与浏览器流程测试
-- 改善文档、翻译或新手引导
+- Better AI overtaking, defending, and wet-weather strategy
+- Canvas performance, narrow-screen HUD, and accessibility improvements
+- New circuit interpretations that follow the geometry standard
+- More physics, strategy, save-recovery, localization, and browser-flow tests
+- Documentation, translation, and onboarding improvements
 
-提交前请按 [AGENTS.md](AGENTS.md) 运行适用于本次改动的测试和 `git diff --check`。请勿引入真实车队名、车手名、官方赛事名、官方 Logo 或其他受保护的视觉素材；新增图片、字体、音效、数据与代码必须具有明确授权。
+Before submitting, follow [AGENTS.md](AGENTS.md) to run the tests applicable to your change and `git diff --check`. Please do not introduce real team names, driver names, official event names, official logos, or other protected visual assets. New images, fonts, audio, data, and code must have clear permission for use.
 
-## 📜 灵感来源与权利声明
+## 📜 Inspiration and rights notice
 
-本项目的比赛周末、赛历、积分、轮胎配方、ERS、天气与维修区策略等设计，参考了现实世界的单座方程式赛车及其公开竞赛机制。项目中的规则、数值、赛道和流程均经过简化、艺术化与游戏化处理，不应被视为对任何官方赛事规则或现实赛道的完整复刻。
+The race-weekend structure, calendar, points competition, tyre compounds, ERS, weather, and pit strategy are inspired by real-world single-seater racing and its publicly known sporting concepts. Rules, values, circuits, and flows have been simplified, stylized, and adapted for gameplay. They are not complete reproductions of any official rulebook or real circuit.
 
-> **Mini Grand Prix 是独立、虚构的开放式车轮竞速游戏。本项目与 Formula 1、FIA，以及任何现实赛事、车队、车手、车辆制造商或赛道运营方均无隶属、授权、赞助或背书关系。**
+> **Mini Grand Prix is an independent, fictional open-wheel racing game. It is not affiliated with, endorsed by, sponsored by, or licensed by Formula 1, the FIA, or any real-world series, team, driver, manufacturer, or circuit operator.**
 
-- 六支车队、车号与涂装均为虚构内容。
-- 所有第三方名称、商标、数据与素材的权利归各自权利人所有。
-- 如认为仓库内容侵犯了你的合法权益，请通过仓库 Issues 联系维护者，并在标题中注明 **`[Rights / 侵权联系]`**，同时提供权利归属、相关链接和具体说明。
-- 3D 地球陆地数据来自 [Natural Earth](https://www.naturalearthdata.com/)（Public Domain）。
-- 手机手柄二维码实现来自 [Project Nayuki QR Code Generator](https://github.com/nayuki/QR-Code-generator)（MIT）。
-- 完整来源、版权与许可说明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+- All six teams, car numbers, and liveries are fictional.
+- All third-party names, trademarks, data, and materials remain the property of their respective owners.
+- If you believe repository content infringes your rights, contact the maintainer through Issues with **`[Rights / 侵权联系]`** in the title and include ownership details, relevant links, and a specific description.
+- 3D globe land data: [Natural Earth](https://www.naturalearthdata.com/) (Public Domain).
+- Phone-controller QR implementation: [Project Nayuki QR Code Generator](https://github.com/nayuki/QR-Code-generator) (MIT).
+- Full source, copyright, and license details: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## ✉️ 联系作者
+## ✉️ Contact
 
-如有问题、建议、合作意向或权利相关事宜，请发送邮件至 [xhhdaxx@gmail.com](mailto:xhhdaxx@gmail.com)。
+For questions, suggestions, collaboration, or rights-related matters, email the author at [xhhdaxx@gmail.com](mailto:xhhdaxx@gmail.com).
 
-## 📄 许可证
+## 📄 License
 
-项目自有源代码使用 [MIT License](LICENSE) 开放；第三方代码与数据保留各自的许可与通知。
+Original source code in this project is released under the [MIT License](LICENSE). Third-party code and data retain their respective licenses and notices.
 
 <div align="center">
 
 **Made with Canvas, curiosity, and a little too much late braking.**
 
-喜欢这个项目？欢迎 **Star ⭐、Fork 🍴 或分享给同样喜欢赛车的朋友。**
+Enjoying the project? **Star ⭐ it, Fork 🍴 it, or share it with another racing fan.**
 
 </div>
