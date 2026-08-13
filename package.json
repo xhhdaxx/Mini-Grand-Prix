@@ -1,0 +1,27 @@
+{
+  "name": "mini-grand-prix",
+  "version": "1.0.0",
+  "description": "Mini Grand Prix · 卡通方程式圈速竞速 · 左右转向 / 前进后退 / 圈速对比",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/run.js",
+    "smoke": "node tests/smoke.mjs",
+    "lint": "eslint .",
+    "dev": "npm run start:keyboard",
+    "start": "npm run start:keyboard",
+    "start:keyboard": "node server.js --input-mode=keyboard",
+    "start:gamepad": "node server.js --input-mode=gamepad",
+    "server": "npm run start:gamepad"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "playwright-core": "^1.61.1"
+  },
+  "dependencies": {
+    "ws": "^8.21.3"
+  }
+}

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Mini Grand Prix strategy screenshot placeholder</title>
+  <desc id="desc">Replace this placeholder with a strategy or pit stop screenshot.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17101f"/>
+      <stop offset="1" stop-color="#0a1824"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" rx="18" fill="url(#bg)"/>
+  <rect x="26" y="26" width="1228" height="668" rx="14" fill="none" stroke="#4a3d59" stroke-width="2" stroke-dasharray="12 12"/>
+  <g transform="translate(430 218)">
+    <circle cx="70" cy="70" r="62" fill="none" stroke="#ff4d3d" stroke-width="16"/>
+    <circle cx="210" cy="70" r="62" fill="none" stroke="#f5c518" stroke-width="16"/>
+    <circle cx="350" cy="70" r="62" fill="none" stroke="#34a5ff" stroke-width="16"/>
+    <text x="70" y="80" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" text-anchor="middle">S</text>
+    <text x="210" y="80" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" text-anchor="middle">M</text>
+    <text x="350" y="80" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" text-anchor="middle">W</text>
+  </g>
+  <text x="640" y="430" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700" text-anchor="middle">STRATEGY SCREENSHOT</text>
+  <text x="640" y="482" fill="#a79bb5" font-family="Arial, Helvetica, sans-serif" font-size="22" text-anchor="middle">Tyres · Weather · ERS · Pit Window</text>
+</svg>

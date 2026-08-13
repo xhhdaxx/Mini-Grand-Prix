@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Track Preview</title>
+<style>
+body { margin: 0; background: #333; display: flex; justify-content: center; align-items: center; height: 100vh; }
+canvas { background: #7ec850; border: 2px solid #fff; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1200" height="900"></canvas>
+<script type="module">
+import { getTrack } from './src/game/track.js';
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+const track = getTrack('sunshine');
+const s = track.samples;
+
+// Draw track outline
+ctx.fillStyle = '#5a5a64';
+ctx.beginPath();
+for (let i = 0; i <= s.length; i++) {
+  const p = s[i % s.length];
+  const x = p.x + p.nx * track.halfWidth;
+  const y = p.y + p.ny * track.halfWidth;
+  if (i === 0) ctx.moveTo(x + 600, y + 450);
+  else ctx.lineTo(x + 600, y + 450);
+}
+for (let i = s.length; i >= 0; i--) {
+  const p = s[i % s.length];
+  const x = p.x - p.nx * track.halfWidth;
+  const y = p.y - p.ny * track.halfWidth;
+  ctx.lineTo(x + 600, y + 450);
+}
+ctx.closePath();
+ctx.fill();
+
+// Draw center line
+ctx.strokeStyle = 'rgba(255,210,63,0.85)';
+ctx.lineWidth = 2;
+ctx.setLineDash([10, 10]);
+ctx.beginPath();
+for (let i = 0; i <= s.length; i++) {
+  const p = s[i % s.length];
+  if (i === 0) ctx.moveTo(p.x + 600, p.y + 450);
+  else ctx.lineTo(p.x + 600, p.y + 450);
+}
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Draw control points
+ctx.fillStyle = '#ff0000';
+for (const p of track.controls || []) {
+  ctx.beginPath();
+  ctx.arc(p.x + 600, p.y + 450, 4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// Draw start point
+ctx.fillStyle = '#00ff00';
+const start = s[0];
+ctx.beginPath();
+ctx.arc(start.x + 600, start.y + 450, 8, 0, Math.PI * 2);
+ctx.fill();
+
+console.log('Track samples:', s.length);
+console.log('First sample:', s[0]);
+console.log('Controls:', track.controls);
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圈速分析 - 12等分视图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        .laps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        .lap-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .lap-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .lap-visual {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        .lap-time {
+            margin-top: 15px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #4a9eff;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .data-table-container {
+            overflow-x: auto;
+            margin-bottom: 40px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .data-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+        }
+        .data-table .fastest {
+            background: rgba(138, 43, 226, 0.3);
+        }
+        .data-table .second-fastest {
+            background: rgba(34, 197, 94, 0.3);
+        }
+        .data-table .total-time {
+            color: #4a9eff;
+            font-weight: 700;
+        }
+        @media (max-width: 1024px) {
+            .laps-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .laps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>圈速分析 - 12等分视图</h1>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #8a2be2;"></div>
+                <span>最快段</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #22c55e;"></div>
+                <span>第二快段</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #eab308;"></div>
+                <span>其余段</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4a9eff;"></div>
+                <span>总用时</span>
+            </div>
+        </div>
+
+        <div class="laps-grid" id="lapsGrid"></div>
+
+        <div class="data-table-container">
+            <table class="data-table" id="dataTable"></table>
+        </div>
+    </div>
+
+    <script>
+        // 圈速数据
+        const lapsData = [
+            {
+                lap: 1,
+                segments: [8.17, 5.91, 6.33, 5.35, 6.57, 7.20, 5.80, 14.07, 11.42, 5.94, 24.19, 31.87],
+                totalTime: "02:12.83"
+            },
+            {
+                lap: 2,
+                segments: [16.24, 8.80, 5.87, 6.01, 6.17, 9.54, 13.27, 10.38, 10.02, 6.10, 9.60, 6.13],
+                totalTime: "01:48.14"
+            },
+            {
+                lap: 3,
+                segments: [14.35, 7.36, 5.86, 6.27, 6.87, 10.62, 6.73, 12.47, 13.55, 6.44, 9.55, 6.33],
+                totalTime: "01:46.40"
+            }
+        ];
+
+        // 找出最快和第二快的段
+        function findFastestSegments(segments) {
+            const indexed = segments.map((time, idx) => ({ time, idx }));
+            indexed.sort((a, b) => a.time - b.time);
+            return {
+                fastest: indexed[0].idx,
+                secondFastest: indexed[1].idx
+            };
+        }
+
+        // 绘制12等分扇形图
+        function drawLapVisual(canvas, segments) {
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 20;
+            const innerRadius = radius * 0.4;
+
+            const { fastest, secondFastest } = findFastestSegments(segments);
+
+            // 绘制12个扇形
+            for (let i = 0; i < 12; i++) {
+                const startAngle = (i * Math.PI / 6) - Math.PI / 2;
+                const endAngle = ((i + 1) * Math.PI / 6) - Math.PI / 2;
+
+                // 确定颜色
+                let color;
+                if (i === fastest) {
+                    color = '#8a2be2'; // 紫色
+                } else if (i === secondFastest) {
+                    color = '#22c55e'; // 绿色
+                } else {
+                    color = '#eab308'; // 黄色
+                }
+
+                // 绘制扇形
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+
+                // 绘制边界
+                ctx.strokeStyle = '#0a0a0a';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // 绘制段号
+                const labelAngle = startAngle + (endAngle - startAngle) / 2;
+                const labelRadius = (radius + innerRadius) / 2;
+                const labelX = centerX + Math.cos(labelAngle) * labelRadius;
+                const labelY = centerY + Math.sin(labelAngle) * labelRadius;
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, labelX, labelY);
+            }
+        }
+
+        // 渲染所有圈
+        function renderLaps() {
+            const grid = document.getElementById('lapsGrid');
+
+            lapsData.forEach(lapData => {
+                const container = document.createElement('div');
+                container.className = 'lap-container';
+
+                const title = document.createElement('div');
+                title.className = 'lap-title';
+                title.textContent = `第 ${lapData.lap} 圈`;
+
+                const visualContainer = document.createElement('div');
+                visualContainer.className = 'lap-visual';
+
+                const canvas = document.createElement('canvas');
+                canvas.width = 300;
+                canvas.height = 300;
+                visualContainer.appendChild(canvas);
+
+                const timeDisplay = document.createElement('div');
+                timeDisplay.className = 'lap-time';
+                timeDisplay.textContent = lapData.totalTime;
+
+                container.appendChild(title);
+                container.appendChild(visualContainer);
+                container.appendChild(timeDisplay);
+                grid.appendChild(container);
+
+                // 绘制可视化
+                drawLapVisual(canvas, lapData.segments);
+            });
+        }
+
+        // 渲染数据表格
+        function renderDataTable() {
+            const table = document.getElementById('dataTable');
+
+            // 表头
+            let headerHTML = '<thead><tr><th>圈</th>';
+            for (let i = 1; i <= 12; i++) {
+                headerHTML += `<th>${i}</th>`;
+            }
+            headerHTML += '<th>总用时</th></tr></thead>';
+
+            // 表体
+            let bodyHTML = '<tbody>';
+            lapsData.forEach(lapData => {
+                const { fastest, secondFastest } = findFastestSegments(lapData.segments);
+
+                bodyHTML += `<tr><td>第 ${lapData.lap} 圈</td>`;
+                lapData.segments.forEach((time, idx) => {
+                    const formattedTime = `00:${time.toFixed(2).padStart(5, '0')}`;
+                    let className = '';
+                    if (idx === fastest) className = 'fastest';
+                    else if (idx === secondFastest) className = 'second-fastest';
+
+                    bodyHTML += `<td class="${className}">${formattedTime}</td>`;
+                });
+                bodyHTML += `<td class="total-time">${lapData.totalTime}</td>`;
+                bodyHTML += '</tr>';
+            });
+            bodyHTML += '</tbody>';
+
+            table.innerHTML = headerHTML + bodyHTML;
+        }
+
+        // 初始化
+        renderLaps();
+        renderDataTable();
+    </script>
+</body>
+</html>

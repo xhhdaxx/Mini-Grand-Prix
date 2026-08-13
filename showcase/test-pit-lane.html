@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>维修区车道线测试 - 卡通风格</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, sans-serif;
+    }
+    canvas {
+      background: #2a2a2a;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .info {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: #fff;
+      background: rgba(0,0,0,0.7);
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .info h3 { margin: 0 0 10px 0; color: #4fc3f7; }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <h3>维修区车道线测试</h3>
+    <p>✓ 外侧白色实线（匝道边界）</p>
+    <p>✓ 内侧白色虚线（与主赛道分界）</p>
+    <p>✓ 草地覆盖缓冲区</p>
+    <p>✓ 卡通风格渲染</p>
+  </div>
+  <canvas id="canvas" width="1400" height="900"></canvas>
+
+  <script type="module">
+    // 简化的赛道生成和绘制逻辑
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // 创建类似上海赛道的采样点（长直道 + 复杂弯道）
+    function createTrackSamples() {
+      const samples = [];
+      const centerX = 700, centerY = 450;
+
+      // 模拟赛道路径：长直道 + 弯道组合
+      const segments = [
+        { type: 'straight', length: 300, angle: 0 },
+        { type: 'curve', radius: 120, angle: Math.PI * 0.4 },
+        { type: 'straight', length: 150, angle: Math.PI * 0.4 },
+        { type: 'curve', radius: 100, angle: Math.PI * 0.8 },
+        { type: 'straight', length: 200, angle: Math.PI * 0.8 },
+        { type: 'curve', radius: 140, angle: Math.PI * 1.3 },
+        { type: 'straight', length: 180, angle: Math.PI * 1.3 },
+        { type: 'curve', radius: 110, angle: Math.PI * 2 }
+      ];
+
+      let x = centerX - 400, y = centerY;
+      let angle = 0;
+
+      segments.forEach(seg => {
+        if (seg.type === 'straight') {
+          const steps = Math.floor(seg.length / 5);
+          for (let i = 0; i < steps; i++) {
+            x += Math.cos(angle) * 5;
+            y += Math.sin(angle) * 5;
+            samples.push({ x, y, angle });
+          }
+        } else {
+          const steps = 30;
+          const deltaAngle = (seg.angle - angle) / steps;
+          for (let i = 0; i < steps; i++) {
+            angle += deltaAngle;
+            x += Math.cos(angle) * seg.radius / steps;
+            y += Math.sin(angle) * seg.radius / steps;
+            samples.push({ x, y, angle });
+          }
+        }
+      });
+
+      // 计算法线和切线
+      samples.forEach((p, i) => {
+        const next = samples[(i + 1) % samples.length];
+        const dx = next.x - p.x;
+        const dy = next.y - p.y;
+        const len = Math.hypot(dx, dy) || 1;
+        p.tx = dx / len;
+        p.ty = dy / len;
+        p.nx = -p.ty;
+        p.ny = p.tx;
+      });
+
+      return samples;
+    }
+
+    const samples = createTrackSamples();
+    const halfWidth = 60;
+    const curbWidth = 8;
+    const bufferWidth = 40;
+
+    // 维修区配置
+    const pitConfig = {
+      entryStart: 10,
+      entryEnd: 40,
+      exitStart: 50,
+      exitEnd: 80
+    };
+
+    // 草地背景纹理
+    function createGrassPattern() {
+      const c = document.createElement('canvas');
+      c.width = 280; c.height = 280;
+      const g = c.getContext('2d');
+      g.fillStyle = '#7ec850';
+      g.fillRect(0, 0, 280, 280);
+      g.fillStyle = 'rgba(80,170,60,0.55)';
+      for (let gx = 0; gx < 280; gx += 40) {
+        for (let gy = 0; gy < 280; gy += 40) {
+          const ox = ((gx * 13 + gy * 7) % 40) - 20;
+          const oy = ((gx * 5 + gy * 11) % 40) - 20;
+          g.beginPath();
+          g.arc((gx + ox) % 280, (gy + oy) % 280, 5, 0, Math.PI * 2);
+          g.fill();
+        }
+      }
+      return ctx.createPattern(c, 'repeat');
+    }
+
+    // 绘制路面轮廓
+    function traceRoad(halfW, shift = 0) {
+      ctx.beginPath();
+      samples.forEach((p, i) => {
+        const x = p.x + p.nx * halfW + shift;
+        const y = p.y + p.ny * halfW + shift;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      samples.slice().reverse().forEach(p => {
+        const x = p.x - p.nx * halfW + shift;
+        const y = p.y - p.ny * halfW + shift;
+        ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+    }
+
+    // 绘制路肩
+    function drawCurbs() {
+      samples.forEach((p, i) => {
+        const next = samples[(i + 1) % samples.length];
+        const red = Math.floor(i / 4) % 2 === 0;
+        const color = red ? '#ff5252' : '#fff5e0';
+
+        // 左侧路肩
+        [-1, 1].forEach(side => {
+          if (i >= pitConfig.entryStart && i <= pitConfig.exitEnd && side === 1) return;
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(p.x + p.nx * side * halfWidth, p.y + p.ny * side * halfWidth);
+          ctx.lineTo(next.x + next.nx * side * halfWidth, next.y + next.ny * side * halfWidth);
+          ctx.lineTo(next.x + next.nx * side * (halfWidth + curbWidth), next.y + next.ny * side * (halfWidth + curbWidth));
+          ctx.lineTo(p.x + p.nx * side * (halfWidth + curbWidth), p.y + p.ny * side * (halfWidth + curbWidth));
+          ctx.closePath();
+          ctx.fill();
+        });
+      });
+    }
+
+    // 绘制维修区匝道
+    function drawPitLane() {
+      const pitPoints = [];
+      for (let i = pitConfig.entryStart; i <= pitConfig.exitEnd; i++) {
+        const p = samples[i];
+        const offset = 35; // 匝道宽度
+        pitPoints.push({
+          x: p.x + p.nx * (halfWidth + offset),
+          y: p.y + p.ny * (halfWidth + offset),
+          nx: p.nx,
+          ny: p.ny,
+          tx: p.tx,
+          ty: p.ty
+        });
+      }
+
+      // 匝道路面（深灰）
+      ctx.fillStyle = '#30323a';
+      ctx.beginPath();
+      pitPoints.forEach((p, i) => {
+        const x = p.x + p.nx * 22;
+        const y = p.y + p.ny * 22;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      pitPoints.slice().reverse().forEach(p => {
+        const x = p.x - p.nx * 22;
+        const y = p.y - p.ny * 22;
+        ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fill();
+
+      // 匝道路面（浅灰）
+      ctx.fillStyle = '#858792';
+      ctx.beginPath();
+      pitPoints.forEach((p, i) => {
+        const x = p.x + p.nx * 18;
+        const y = p.y + p.ny * 18;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      pitPoints.slice().reverse().forEach(p => {
+        const x = p.x - p.nx * 18;
+        const y = p.y - p.ny * 18;
+        ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fill();
+
+      // 外侧白色实线
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      pitPoints.forEach((p, i) => {
+        const x = p.x + p.nx * 20;
+        const y = p.y + p.ny * 20;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // 内侧白色虚线
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([14, 10]);
+      ctx.beginPath();
+      pitPoints.forEach((p, i) => {
+        const x = p.x - p.nx * 6;
+        const y = p.y - p.ny * 6;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 中央分隔线
+      ctx.strokeStyle = '#f5d76e';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([16, 12]);
+      ctx.beginPath();
+      pitPoints.forEach((p, i) => {
+        i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // PIT IN 和 PIT OUT 标签
+      const drawLabel = (index, text, color) => {
+        const p = pitPoints[index - pitConfig.entryStart];
+        if (!p) return;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(Math.atan2(p.ty, p.tx));
+        ctx.fillStyle = color;
+        ctx.strokeStyle = '#2b2b33';
+        ctx.lineWidth = 2;
+        ctx.fillRect(-30, -35, 60, 20);
+        ctx.strokeRect(-30, -35, 60, 20);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 0, -25);
+        ctx.restore();
+      };
+
+      drawLabel(pitConfig.entryStart + 5, 'PIT IN', '#e84545');
+      drawLabel(pitConfig.exitStart + 5, 'PIT OUT', '#3a86ff');
+    }
+
+    // 绘制缓冲区
+    function drawBuffers() {
+      samples.forEach((p, i) => {
+        const next = samples[(i + 1) % samples.length];
+        [-1, 1].forEach(side => {
+          // 维修区一侧用草地
+          if (i >= pitConfig.entryStart && i <= pitConfig.exitEnd && side === 1) {
+            ctx.fillStyle = '#7ec850';
+          } else {
+            // 其他区域用浅灰铺装
+            ctx.fillStyle = '#c9ccd0';
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(p.x + p.nx * side * (halfWidth + curbWidth), p.y + p.ny * side * (halfWidth + curbWidth));
+          ctx.lineTo(next.x + next.nx * side * (halfWidth + curbWidth), next.y + next.ny * side * (halfWidth + curbWidth));
+          ctx.lineTo(next.x + next.nx * side * (halfWidth + curbWidth + bufferWidth), next.y + next.ny * side * (halfWidth + curbWidth + bufferWidth));
+          ctx.lineTo(p.x + p.nx * side * (halfWidth + curbWidth + bufferWidth), p.y + p.ny * side * (halfWidth + curbWidth + bufferWidth));
+          ctx.closePath();
+          ctx.fill();
+        });
+      });
+    }
+
+    // 主绘制流程
+    ctx.fillStyle = createGrassPattern();
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 缓冲区
+    drawBuffers();
+
+    // 赛道阴影
+    ctx.fillStyle = '#4b5055';
+    traceRoad(halfWidth + 4, 4);
+    ctx.fill();
+
+    // 赛道路面（深灰）
+    ctx.fillStyle = '#5a5a64';
+    traceRoad(halfWidth, 0);
+    ctx.fill();
+
+    // 赛道路面（亮灰）
+    ctx.fillStyle = '#6e6e7a';
+    traceRoad(halfWidth - 6, 0);
+    ctx.fill();
+
+    // 红白路肩
+    drawCurbs();
+
+    // 维修区
+    drawPitLane();
+
+    // 中心虚线
+    ctx.strokeStyle = 'rgba(255,210,63,0.85)';
+    ctx.lineWidth = 4;
+    ctx.setLineDash([22, 20]);
+    ctx.beginPath();
+    samples.forEach((p, i) => {
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 起跑线
+    const start = samples[0];
+    const next = samples[1];
+    const dx = next.x - start.x, dy = next.y - start.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const px = -dy / len, py = dx / len;
+    const cells = 10;
+    const cellW = (halfWidth * 2) / cells;
+    for (let i = 0; i < cells; i++) {
+      const t = -halfWidth + i * cellW;
+      ctx.save();
+      ctx.translate(start.x + px * t, start.y + py * t);
+      ctx.rotate(Math.atan2(dy, dx));
+      ctx.fillStyle = i % 2 === 0 ? '#ffffff' : '#222';
+      ctx.fillRect(-9, -cellW / 2, 18, cellW);
+      ctx.fillStyle = i % 2 === 0 ? '#222' : '#ffffff';
+      ctx.fillRect(-27, -cellW / 2, 18, cellW);
+      ctx.restore();
+    }
+  </script>
+</body>
+</html>

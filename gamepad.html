@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title data-i18n="Mini Grand Prix 手柄 · Controller">Mini Grand Prix Controller</title>
+<!-- PWA：添加到主屏幕后全屏无浏览器 UI -->
+<link rel="manifest" href="./assets/gamepad-manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mini GP Controller">
+<meta name="theme-color" content="#eaf6fb">
+<link rel="apple-touch-icon" href="./assets/gamepad-icon-192.png">
+<link rel="icon" type="image/png" href="./assets/gamepad-icon-192.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #eaf6fb;
+    color: #2b2b33;
+    font-family: "Baloo 2", "Comic Sans MS", "PingFang SC", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    user-select: none; -webkit-user-select: none;
+    touch-action: none;
+  }
+
+  /* 竖屏时强制提示横屏 */
+  #rotateHint {
+    position: fixed; inset: 0; z-index: 200;
+    background: #eaf6fb;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 24px;
+  }
+  #rotateHint .phone {
+    width: 64px; height: 110px; border: 5px solid #2b2b33; border-radius: 12px;
+    background: #fff8e7; position: relative; margin-bottom: 22px;
+    animation: rotate 1.8s ease-in-out infinite;
+  }
+  #rotateHint .phone::after {
+    content: ""; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 24px; height: 5px; background: #2b2b33; border-radius: 3px;
+  }
+  @keyframes rotate {
+    0%, 40% { transform: rotate(0); }
+    60%, 100% { transform: rotate(-90deg); }
+  }
+  #rotateHint h2 { font-size: 22px; font-weight: 900; color: #e84545; text-shadow: 2px 2px 0 #2b2b33; }
+  #rotateHint p { margin-top: 8px; font-size: 13px; color: #2b2b33; font-weight: 700; }
+  @media (orientation: landscape) { #rotateHint { display: none; } }
+
+  /* ===== 顶部状态栏已废弃（数据移到速度卡片上方小窗）===== */
+  #status { display: none; }
+
+  /* ===== 底部引导 ===== */
+  #installHint {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 11;
+    background: #fff8e7; border-top: 3px solid #2b2b33;
+    padding: 10px 14px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-size: 12px; font-weight: 800; color: #2b2b33;
+    transform: translateY(110%); transition: transform .35s cubic-bezier(.2,.9,.3,1.2);
+  }
+  #installHint.show { transform: translateY(0); }
+  #installHint .emoji { font-size: 18px; }
+  #installHint .close {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border: 2px solid #2b2b33; border-radius: 6px;
+    background: #fff; line-height: 18px; text-align: center; cursor: pointer;
+    box-shadow: 0 2px 0 #2b2b33; font-weight: 900;
+  }
+
+  /* ===== 主舞台：左右两列各占满空间，中间速度卡片固定 ===== */
+  #stage {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; align-items: stretch; justify-content: space-between;
+    gap: 14px; padding: 14px;
+  }
+  .cluster {
+    display: flex; flex-direction: column;
+    align-items: stretch; justify-content: stretch;
+    gap: 12px;
+  }
+  /* 左侧踏板组：占满左侧整列，刹车与油门左右并排各占一半 */
+  .cluster.pedals {
+    flex: 1 1 0; min-width: 0;
+    flex-direction: row;
+    align-items: stretch; justify-content: stretch;
+    gap: 12px;
+  }
+  /* 右侧控制组：占满右侧整列，4 个方形按钮 2×2 各占一半 */
+  .cluster.controls {
+    flex: 1 1 0; min-width: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ===== 中间列：状态小窗 + 速度卡片 ===== */
+  .center-col {
+    flex: 0 0 auto;
+    display: flex; flex-direction: column;
+    align-items: stretch; gap: 8px;
+  }
+  /* 状态小窗（P1 + 已连接） */
+  .status-chip {
+    background: #fff8e7;
+    border: 3px solid #2b2b33;
+    border-radius: 12px;
+    padding: 6px 10px;
+    box-shadow: 0 4px 0 #2b2b33;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; min-height: 40px;
+  }
+  .chip-left { display: flex; align-items: center; gap: 6px; }
+  #fullscreenBtn {
+    width: 28px; height: 28px; padding: 0;
+    border: 2px solid #2b2b33; border-radius: 7px;
+    background: #fff; color: #2b2b33;
+    font-size: 14px; cursor: pointer;
+    box-shadow: 0 2px 0 #2b2b33;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .08s, box-shadow .08s;
+  }
+  #fullscreenBtn:active { transform: translateY(2px); box-shadow: 0 0 0 #2b2b33; }
+  #fullscreenBtn.hidden-fullscreen { display: none; }
+  #langBtn {
+    width: 28px; height: 28px; padding: 0;
+    border: 2px solid #2b2b33; border-radius: 7px;
+    background: #fff8e7; color: #2b2b33;
+    font: 900 12px "Baloo 2", system-ui, sans-serif;
+    cursor: pointer; box-shadow: 0 2px 0 #2b2b33;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .08s, box-shadow .08s;
+  }
+  #langBtn:active { transform: translateY(2px); box-shadow: 0 0 0 #2b2b33; }
+  #playerTag {
+    font-weight: 900; padding: 3px 10px; border-radius: 8px;
+    border: 2.5px solid #2b2b33; background: #fff;
+    font-size: 14px; letter-spacing: 1px;
+    box-shadow: 0 2px 0 #2b2b33;
+  }
+  #playerTag.p1 { color: #3a86ff; }
+  #playerTag.p2 { color: #e84545; }
+  #connWrap { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; }
+  #connDot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #e84545; border: 2px solid #2b2b33;
+    transition: background .2s;
+  }
+  #connDot.online { background: #49d17d; }
+
+  /* ===== 圆角矩形按钮（方向键 / ERS / 倒车）：统一占满各自网格单元格 ===== */
+  .pad-btn {
+    border: 4px solid #2b2b33;
+    border-radius: 22px;
+    background: #fff8e7;
+    color: #2b2b33;
+    font-weight: 900;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 7px 0 #2b2b33, 0 11px 16px rgba(0,0,0,0.18);
+    transition: transform .06s, box-shadow .06s;
+    touch-action: none; cursor: pointer;
+    line-height: 1;
+    width: 100%; height: 100%;
+    min-width: 0; min-height: 0;
+  }
+  .pad-btn.active {
+    transform: translateY(5px);
+    box-shadow: 0 2px 0 #2b2b33, 0 4px 8px rgba(0,0,0,0.18);
+  }
+  .pad-btn .ico { font-size: clamp(28px, 8vmin, 56px); }
+  .pad-btn .lbl { font-size: clamp(10px, 2.4vmin, 13px); letter-spacing: 1px; margin-top: 4px; opacity: .7; font-weight: 800; }
+
+  /* 方向键 / ERS / 倒车：统一奶黄底 + 深色文字 */
+  .btn-steer { background: #fff8e7; }
+
+  .btn-ers { background: #fff8e7; color: #2b2b33; }
+  .btn-ers .lbl { display: none; }
+
+  .btn-rev { background: #fff8e7; color: #2b2b33; }
+  .btn-rev .lbl { display: none; }
+
+  /* 进站键：默认奶黄背景色，激活（已请求进站）时橙色高亮 */
+  .btn-pit { background: #fff8e7; color: #2b2b33; }
+  .btn-pit .lbl { font-size: clamp(9px, 2.2vmin, 12px); }
+  .btn-pit.active { background: #ff8700; color: #fff; box-shadow: 0 4px 0 #2b2b33, inset 0 0 0 4px #fff8e7; }
+
+  /* 速度卡片内的进站键：紧凑横条 */
+  .speed-card .btn-pit {
+    margin-top: 10px;
+    padding: 10px 0;
+    width: 100%; height: auto;
+    background: #fff8e7;
+    color: #2b2b33;
+    border: 3px solid #2b2b33;
+    border-radius: 10px;
+    box-shadow: 0 4px 0 #2b2b33;
+    font-weight: 900;
+    flex-direction: row;
+  }
+  .speed-card .btn-pit:active { transform: translateY(2px); box-shadow: 0 2px 0 #2b2b33; }
+  .speed-card .btn-pit.active { background: #ff8700; color: #fff; box-shadow: 0 2px 0 #2b2b33, inset 0 0 0 3px #fff8e7; }
+  .speed-card .btn-pit .ico { font-size: 18px; }
+  .speed-card .btn-pit .lbl { display: inline; font-size: 13px; margin-left: 6px; margin-top: 0; opacity: .95; }
+
+  /* 维修区急停：独立于速度卡片，按住时映射键盘 S。 */
+  .emergency-chip {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    flex: 1 1 0; width: 100%; min-height: 0; padding: 10px 12px;
+    border: 3px solid #2b2b33; border-radius: 12px;
+    background: #fff8e7; color: #2b2b33;
+    box-shadow: 0 4px 0 #2b2b33;
+    font: 900 15px "Baloo 2", "PingFang SC", system-ui, sans-serif;
+    letter-spacing: .5px; touch-action: none;
+    transition: transform .06s, box-shadow .06s, background .06s;
+  }
+  .emergency-chip .key {
+    min-width: 29px; padding: 2px 7px; border: 2px solid #2b2b33;
+    border-radius: 7px; background: #e84545; color: #fff;
+    box-shadow: 0 2px 0 #2b2b33; font-size: 18px;
+  }
+  .emergency-chip.active {
+    transform: translateY(3px); background: #e84545; color: #fff;
+    box-shadow: 0 1px 0 #2b2b33;
+  }
+
+  /* ===== 真实踏板（油门 / 刹车）：占满左侧单元格 ===== */
+  .pedal {
+    position: relative;
+    flex: 1 1 0; min-height: 0;
+    width: 100%;
+    padding: 0; border: none; background: transparent;
+    cursor: pointer; touch-action: none;
+  }
+  .pedal-face {
+    position: absolute; inset: 0;
+    border: 4px solid #2b2b33;
+    border-radius: 16px 16px 10px 10px;
+    clip-path: polygon(8% 0%, 92% 0%, 98% 100%, 2% 100%);
+    box-shadow: 0 9px 0 #2b2b33, 0 14px 18px rgba(0,0,0,0.18),
+                inset 0 -12px 16px rgba(0,0,0,0.32),
+                inset 0 8px 10px rgba(255,255,255,0.18);
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    padding-bottom: 16px; padding-top: 10px;
+    color: #2b2b33; transition: transform .08s, box-shadow .08s;
+  }
+  .pedal.gas .pedal-face {
+    background: #fff8e7;
+  }
+  .pedal.brake .pedal-face {
+    background: #fff8e7;
+  }
+  .pedal-grip {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    width: 60%; height: 42%;
+    background: repeating-linear-gradient(0deg,
+      rgba(0,0,0,0.32) 0 5px,
+      rgba(255,255,255,0.10) 5px 10px);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .pedal-label {
+    font-size: clamp(14px, 3.4vmin, 22px); font-weight: 900; letter-spacing: 1.5px;
+    z-index: 1;
+  }
+  .pedal.active .pedal-face {
+    transform: translateY(8px);
+    box-shadow: 0 1px 0 #2b2b33, 0 3px 6px rgba(0,0,0,0.18),
+                inset 0 -7px 12px rgba(0,0,0,0.4),
+                inset 0 3px 6px rgba(255,255,255,0.15);
+  }
+  .pedal::after {
+    content: ''; position: absolute;
+    left: 50%; bottom: -7px; transform: translateX(-50%);
+    width: 70%; height: 10px;
+    background: linear-gradient(180deg, #6b7280, #2b2b33);
+    border: 2px solid #2b2b33;
+    border-radius: 4px 4px 8px 8px;
+  }
+
+  /* ===== 中央卡通速度卡片 ===== */
+  .speed-card {
+    position: relative;
+    background: #fff8e7;
+    border: 4px solid #2b2b33;
+    border-radius: 22px;
+    padding: 22px 24px 18px;
+    box-shadow: 0 8px 0 #2b2b33, 0 14px 22px rgba(0,0,0,0.18);
+    width: 216px;
+    text-align: center;
+  }
+  .speed-card::before {
+    content: 'SPEED';
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+    background: #e84545; color: #fff;
+    border: 3px solid #2b2b33; border-radius: 8px;
+    padding: 2px 14px; font-size: 11px; font-weight: 900; letter-spacing: 2.5px;
+    box-shadow: 0 3px 0 #2b2b33;
+  }
+  .speed-main {
+    display: flex; align-items: baseline; justify-content: center; gap: 4px;
+    margin: 4px 0 8px;
+  }
+  #speedVal {
+    font-size: 64px; font-weight: 900; color: #2b2b33;
+    line-height: 1; letter-spacing: -2px;
+    font-variant-numeric: tabular-nums;
+  }
+  #speedUnit { font-size: 15px; font-weight: 800; color: #666; }
+  .card-divider {
+    height: 3px; background: #2b2b33; border-radius: 2px;
+    margin: 4px auto 10px; width: 70%; opacity: 0.18;
+  }
+  #lapLine {
+    font-size: 13px; font-weight: 900; color: #3a86ff;
+    letter-spacing: 0.3px; line-height: 1.4;
+  }
+
+  /* ===== 玩家选择遮罩 ===== */
+  #overlay {
+    position: fixed; inset: 0; z-index: 150;
+    background: rgba(234,246,251,0.85); backdrop-filter: blur(8px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 24px;
+  }
+  #overlay .card {
+    background: #fff8e7; border: 4px solid #2b2b33; border-radius: 28px;
+    padding: 32px 28px; box-shadow: 0 18px 0 #2b2b33, 0 24px 50px rgba(0,0,0,0.2);
+    max-width: 340px;
+  }
+  #overlay h2 {
+    font-size: 28px; font-weight: 900; color: #e84545;
+    text-shadow: 3px 3px 0 #2b2b33; letter-spacing: -0.5px;
+  }
+  #overlay p { color: #666; margin: 12px 0 22px; font-size: 13px; line-height: 1.6; font-weight: 700; }
+
+  /* ===== 换胎全屏提示 ===== */
+  .pit-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(20,22,28,0.92); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .15s;
+  }
+  .pit-overlay.show { opacity: 1; pointer-events: auto; }
+  .pit-content {
+    background: #fff8e7; border: 4px solid #2b2b33; border-radius: 28px;
+    padding: 28px 36px; text-align: center;
+    box-shadow: 0 18px 0 #2b2b33, 0 24px 50px rgba(0,0,0,0.4);
+    width: min(500px, calc(100vw - 24px));
+  }
+  .pit-title {
+    font-size: 18px; font-weight: 900; color: #e84545;
+    letter-spacing: 2px; margin-bottom: 14px;
+    text-shadow: 2px 2px 0 #2b2b33;
+  }
+  .pit-tyre-circle {
+    width: 96px; height: 96px; border-radius: 50%;
+    border: 4px solid #2b2b33; margin: 0 auto 10px;
+    box-shadow: 0 6px 0 #2b2b33, inset 0 -8px 16px rgba(0,0,0,0.2);
+    background: #fff;
+  }
+  .pit-tyre-code {
+    font-size: 42px; font-weight: 900; color: #2b2b33; line-height: 1;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+  }
+  .pit-tyre-name {
+    font-size: 14px; font-weight: 800; color: #666; margin-top: 4px;
+  }
+  .pit-progress-track {
+    width: 100%; height: 12px; background: #e8e8ee;
+    border: 2px solid #2b2b33; border-radius: 8px; margin: 16px 0 8px;
+    overflow: hidden;
+  }
+  .pit-progress-bar {
+    height: 100%; background: linear-gradient(90deg, #49d17d, #3a86ff);
+    width: 0; transition: width .1s linear;
+  }
+  .pit-hint {
+    font-size: 12px; font-weight: 700; color: #666; letter-spacing: 1px;
+  }
+  /* 两阶段切换 */
+  .pit-phase { display: none; }
+  .pit-phase.active { display: block; }
+  /* 选胎面板 */
+  .pit-tyres {
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;
+    margin: 6px 0 10px; justify-items: center;
+  }
+  .pit-tyre-btn {
+    width: 100%; min-width: 0; padding: 8px 4px 7px;
+    border: 3px solid #2b2b33; border-radius: 14px;
+    background: #fff; color: #2b2b33;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    cursor: pointer; box-shadow: 0 4px 0 #2b2b33;
+    transition: transform .08s, box-shadow .08s, background .12s;
+    font-family: "Baloo 2", system-ui, sans-serif;
+  }
+  .pit-tyre-btn .dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--c); border: 2px solid #2b2b33;
+    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.18);
+  }
+  .pit-tyre-btn .code { font-size: 18px; font-weight: 900; line-height: 1; }
+  .pit-tyre-btn .lbl { font-size: 10px; font-weight: 800; letter-spacing: 1px; opacity: .85; }
+  .pit-tyre-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #2b2b33; }
+  .pit-tyre-btn.picked {
+    background: var(--c); color: #2b2b33;
+    box-shadow: 0 4px 0 #2b2b33, inset 0 0 0 3px #fff8e7;
+  }
+  .pick { display: flex; gap: 14px; justify-content: center; }
+  .pick button {
+    padding: 14px 24px; border: 3px solid #2b2b33; border-radius: 16px;
+    background: #fff; color: #2b2b33; font: 900 16px "Baloo 2", system-ui;
+    letter-spacing: 1px; cursor: pointer; box-shadow: 0 6px 0 #2b2b33;
+    transition: transform .08s, box-shadow .08s;
+  }
+  .pick button:active { transform: translateY(4px); box-shadow: 0 2px 0 #2b2b33; }
+  .pick button.p1 { background: #3a86ff; color: #fff; }
+  .pick button.p2 { background: #e84545; color: #fff; }
+  .hint-url { margin-top: 18px; font-size: 11px; color: #888; font-weight: 700; }
+  .hidden { display: none !important; }
+
+  /* ===== 响应式：矮横屏收紧间距，按钮由 flex/grid 自适应 ===== */
+  @media (max-height: 420px) and (orientation: landscape) {
+    .speed-card { width: 190px; padding: 20px 22px 16px; }
+    #speedVal { font-size: 56px; }
+    .emergency-chip { padding: 5px 10px; }
+    .cluster { gap: 10px; }
+    #stage { gap: 12px; padding: 10px 12px; }
+  }
+  @media (max-height: 360px) and (orientation: landscape) {
+    .speed-card { width: 174px; padding: 18px 20px 14px; }
+    #speedVal { font-size: 50px; }
+    #lapLine { font-size: 12px; }
+    .status-chip { padding: 4px 8px; min-height: 36px; }
+    .emergency-chip { padding: 3px 8px; }
+    #playerTag { font-size: 12px; padding: 2px 8px; }
+    .cluster { gap: 8px; }
+    #stage { gap: 10px; padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- 竖屏提示 -->
+  <div id="rotateHint">
+    <div class="phone"></div>
+    <h2 data-i18n="请横屏使用">Rotate to landscape</h2>
+    <p data-i18n="旋转手机到横屏开启手柄">Rotate your phone to start the controller</p>
+  </div>
+
+  <!-- 玩家选择 -->
+  <div id="overlay" class="hidden">
+    <div class="card">
+      <h2 data-i18n="选择位置">Choose a seat</h2>
+      <p data-i18n-html="overlay.hint">Scan the matching QR code on your PC,<br>tap a button below to enter</p>
+      <div class="pick">
+        <button class="p1" data-pick="p1" data-i18n="P1 玩家">P1 Player</button>
+        <button class="p2" data-pick="p2" data-i18n="P2 玩家">P2 Player</button>
+      </div>
+      <div class="hint-url" data-i18n="也可在网址后加 ?p=1 或 ?p=2 直接指定">Or append ?p=1 / ?p=2 to the URL</div>
+    </div>
+  </div>
+
+  <!-- 底部引导：添加到主屏幕 -->
+  <div id="installHint">
+    <span class="emoji">📱</span>
+    <span id="hintText" data-i18n="添加到主屏幕 · 全屏无浏览器栏">Add to home screen · fullscreen, no browser UI</span>
+    <span class="close" id="hintClose">×</span>
+  </div>
+
+  <!-- 主舞台：左踏板 / 中（状态小窗+速度卡）/ 右方向键+功能键 -->
+  <div id="stage">
+    <!-- 左：刹车 + 油门踏板（横向并排）-->
+    <div class="cluster pedals">
+      <button class="pedal brake" data-key="down">
+        <div class="pedal-face">
+          <div class="pedal-grip"></div>
+          <div class="pedal-label">BRAKE</div>
+        </div>
+      </button>
+      <button class="pedal gas" data-key="up">
+        <div class="pedal-face">
+          <div class="pedal-grip"></div>
+          <div class="pedal-label">GAS</div>
+        </div>
+      </button>
+    </div>
+
+    <!-- 中：状态小窗（P1/已连接）+ 速度卡片 -->
+    <div class="center-col">
+      <div class="status-chip">
+        <div class="chip-left">
+          <button id="fullscreenBtn" title="Fullscreen" data-i18n-title="全屏">⛶</button>
+          <button id="langBtn" type="button" data-i18n-title="切换语言" data-i18n-aria="切换语言" title="Switch Language" aria-label="Switch Language">中</button>
+          <span id="playerTag" class="p1">P1</span>
+        </div>
+        <div id="connWrap">
+          <span id="connDot"></span>
+          <span id="connText" data-i18n="未连接">Not connected</span>
+        </div>
+      </div>
+      <div class="speed-card">
+        <div class="speed-main">
+          <span id="speedVal">0</span><span id="speedUnit">km/h</span>
+        </div>
+        <div class="card-divider"></div>
+        <div id="lapLine">Lap 0 / 0</div>
+        <button class="pad-btn btn-pit" id="btnPit"><span class="ico">P</span><span class="lbl" data-i18n="进站">Pit</span></button>
+      </div>
+      <button class="emergency-chip" data-key="emergency" type="button" aria-label="Pit Emergency Stop" data-i18n-aria="维修区急停">
+        <span class="key">S</span><span data-i18n="维修区急停">Pit Emergency Stop</span>
+      </button>
+      </div>
+
+    <!-- 右：倒车 · ERS · 左 · 右（2×2 网格，圆角矩形）-->
+    <div class="cluster controls">
+      <button class="pad-btn btn-rev" data-key="reverse"><span class="ico">R</span></button>
+      <button class="pad-btn btn-ers" data-key="boost"><span class="ico">⚡</span></button>
+      <button class="pad-btn btn-steer" data-key="left">
+        <span class="ico">◀</span>
+        <span class="lbl">LEFT</span>
+      </button>
+      <button class="pad-btn btn-steer" data-key="right">
+        <span class="ico">▶</span>
+        <span class="lbl">RIGHT</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 换胎全屏提示：阶段1=选胎 阶段2=换胎进度 -->
+  <div id="pitOverlay" class="pit-overlay">
+    <div class="pit-content">
+      <!-- 阶段 1：选胎面板（车在 P 房停稳后弹出） -->
+      <div class="pit-phase" id="pitPhasePick">
+        <div class="pit-title" data-i18n="请选择轮胎">Select a tyre</div>
+        <div class="pit-tyres">
+          <button class="pit-tyre-btn" type="button" data-tyre="soft" style="--c:#ff3b45">
+            <span class="dot"></span><span class="code">S</span><span class="lbl" data-i18n="软胎">Soft</span>
+          </button>
+          <button class="pit-tyre-btn" type="button" data-tyre="medium" style="--c:#ffd23f">
+            <span class="dot"></span><span class="code">M</span><span class="lbl" data-i18n="中性">Medium</span>
+          </button>
+          <button class="pit-tyre-btn" type="button" data-tyre="hard" style="--c:#f4f4f4">
+            <span class="dot"></span><span class="code">H</span><span class="lbl" data-i18n="硬胎">Hard</span>
+          </button>
+          <button class="pit-tyre-btn" type="button" data-tyre="inter" style="--c:#49d17d">
+            <span class="dot"></span><span class="code">I</span><span class="lbl" data-i18n="半雨">Inter</span>
+          </button>
+          <button class="pit-tyre-btn" type="button" data-tyre="wet" style="--c:#3a86ff">
+            <span class="dot"></span><span class="code">W</span><span class="lbl" data-i18n="全雨">Wet</span>
+          </button>
+        </div>
+        <div class="pit-hint" data-i18n="已停稳 · 点击选择换什么胎">Stopped · tap a tyre</div>
+      </div>
+      <!-- 阶段 2：服务进度（原有） -->
+      <div class="pit-phase" id="pitPhaseService">
+        <div class="pit-title" data-i18n="进站换胎">Pit Stop</div>
+        <div class="pit-tyre-circle"></div>
+        <div class="pit-tyre-code">S</div>
+        <div class="pit-tyre-name" data-i18n="软胎 S">Soft S</div>
+        <div class="pit-progress-track"><div class="pit-progress-bar"></div></div>
+        <div class="pit-hint" data-i18n="技师正在换胎…">Changing tyre…</div>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import { t, isZh, setLang, langButtonLabel, onLangChange } from './src/i18n.js';
+  const params = new URLSearchParams(location.search);
+  let player = params.get('p') === '2' ? 'p2' : (params.get('p') === '1' ? 'p1' : null);
+
+  const overlay = document.getElementById('overlay');
+  const tag = document.getElementById('playerTag');
+  const dot = document.getElementById('connDot');
+  const connText = document.getElementById('connText');
+
+  let ws = null;
+  let reconnectTimer = null;
+  let heartbeatTimer = null;
+  let connected = false;
+  let reconnecting = false;
+  let lastState = null;
+
+  function setPlayer(p) {
+    player = p;
+    tag.textContent = p === 'p2' ? 'P2' : 'P1';
+    tag.className = 'playerTag ' + (p === 'p2' ? 'p2' : 'p1');
+    overlay.classList.add('hidden');
+    connect();
+  }
+
+  document.querySelectorAll('.pick button').forEach(b => {
+    b.onclick = () => setPlayer(b.dataset.pick);
+  });
+
+  if (player) setPlayer(player);
+  else overlay.classList.remove('hidden');
+
+  function connect() {
+    if (ws && (ws.readyState === 0 || ws.readyState === 1)) return;
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const url = `${proto}//${location.host}/ws`;
+    ws = new WebSocket(url);
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ role: 'register', player }));
+      dot.classList.add('online');
+      connected = true; reconnecting = false;
+      connText.textContent = t('已连接');
+      if (heartbeatTimer) clearInterval(heartbeatTimer);
+      heartbeatTimer = setInterval(() => {
+        if (ws && ws.readyState === 1) ws.send(JSON.stringify({ role: 'ping' }));
+      }, 2000);
+    };
+    ws.onmessage = (ev) => {
+      let msg; try { msg = JSON.parse(ev.data); } catch { return; }
+      if (msg.type === 'state' && msg.player === player) {
+        lastState = msg;
+        updateDisplay(msg);
+      }
+    };
+    ws.onclose = () => {
+      dot.classList.remove('online');
+      connected = false; reconnecting = true;
+      connText.textContent = t('重连中…');
+      if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
+      reconnectTimer = setTimeout(connect, 800);
+    };
+    ws.onerror = () => { try { ws.close(); } catch {} };
+  }
+
+  // 时间格式化：秒数 → M:SS.t 或 SS.t
+  function fmtTime(s) {
+    if (s == null || !isFinite(s)) return '--';
+    if (s < 60) return s.toFixed(1);
+    const m = Math.floor(s / 60);
+    return `${m}:${(s % 60).toFixed(1).padStart(4, '0')}`;
+  }
+  const speedEl = document.getElementById('speedVal');
+  const lapEl = document.getElementById('lapLine');
+  const speedCard = document.querySelector('.speed-card');
+  const btnPit = document.getElementById('btnPit');
+  const pitOverlay = document.getElementById('pitOverlay');
+  let pitRequested = false;
+  // 速度卡片背景色跟随电脑前端速度栏颜色（由后端推送 speedColor）
+  function applySpeedCardColor(color) {
+    if (!speedCard) return;
+    if (color) speedCard.style.background = color;
+    else speedCard.style.background = ''; // 回退到 CSS 默认奶黄
+  }
+  const TYRE_LABELS = code => t({ soft: '软胎 S', medium: '中性胎 M', hard: '硬胎 H', inter: '半雨胎 I', wet: '全雨胎 W' }[code] || code);
+  const TYRE_COLORS = { soft: '#ff3b45', medium: '#ffd23f', hard: '#f4f4f4', inter: '#49d17d', wet: '#3a86ff' };
+  function updateDisplay(s) {
+    speedEl.textContent = s.speed ?? 0;
+    const lap = Math.max(1, Math.min(s.lap + 1, s.totalLaps || s.lap + 1));
+    applySpeedCardColor(s.speedColor || null);
+    if (s.countdown > 0) {
+      lapEl.textContent = t('倒计时 {c} · 共 {n} 圈', { c: s.countdown, n: s.totalLaps || '?' });
+      lapEl.style.color = '#e84545';
+    } else if (s.finished) {
+      lapEl.textContent = t('完赛 · 最佳 {time}', { time: fmtTime(s.bestLap) });
+      lapEl.style.color = '#49d17d';
+    } else {
+      lapEl.textContent = t('第 {lap}/{total} 圈 · {time} · 最佳 {best}', { lap, total: s.totalLaps || '?', time: fmtTime(s.lapTime), best: fmtTime(s.bestLap) });
+      lapEl.style.color = '#3a86ff';
+    }
+    // 进站键状态：已请求时橙色高亮，文案切换为"已请求"
+    if (btnPit) {
+      pitRequested = !!s.pitRequested;
+      btnPit.classList.toggle('active', !!s.pitRequested);
+      const lbl = btnPit.querySelector('.lbl');
+      if (lbl) lbl.textContent = t(s.pitRequested ? '已请求' : '进站');
+    }
+    // 换胎全屏提示：阶段1=选胎 阶段2=换胎进度
+    if (pitOverlay) {
+      const pick = !!s.canPickTyre;
+      const servicing = !!s.pitServicing;
+      const on = pick || servicing;
+      pitOverlay.classList.toggle('show', on);
+      pitOverlay.querySelector('#pitPhasePick').classList.toggle('active', pick && !servicing);
+      pitOverlay.querySelector('#pitPhaseService').classList.toggle('active', servicing);
+      // 离开 P 房或换胎完成后，清掉本地选胎高亮
+      if (!pick && !servicing) {
+        document.querySelectorAll('.pit-tyre-btn.picked').forEach(b => b.classList.remove('picked'));
+      }
+      if (servicing) {
+        const code = s.pitServicing;
+        const svc = pitOverlay.querySelector('#pitPhaseService');
+        svc.querySelector('.pit-tyre-code').textContent = code.toUpperCase();
+        svc.querySelector('.pit-tyre-name').textContent = TYRE_LABELS(code);
+        svc.querySelector('.pit-tyre-circle').style.background = TYRE_COLORS[code] || '#fff';
+        const bar = svc.querySelector('.pit-progress-bar');
+        if (bar) bar.style.width = `${Math.round((s.pitProgress || 0) * 100)}%`;
+      }
+    }
+  }
+
+  function sendInput(key, pressed) {
+    if (ws && ws.readyState === 1) {
+      ws.send(JSON.stringify({ role: 'input', player, key, pressed }));
+    }
+  }
+
+  document.querySelectorAll('.pad-btn, .pedal, .emergency-chip').forEach(btn => {
+    const key = btn.dataset.key;
+    if (!key) return; // 进站键等无 data-key 的按钮走专用监听
+    const press = (e) => {
+      e.preventDefault();
+      btn.classList.add('active');
+      sendInput(key, true);
+      if (navigator.vibrate) navigator.vibrate(10);
+    };
+    const release = (e) => {
+      e.preventDefault();
+      btn.classList.remove('active');
+      sendInput(key, false);
+    };
+    btn.addEventListener('pointerdown', press);
+    btn.addEventListener('pointerup', release);
+    btn.addEventListener('pointerleave', release);
+    btn.addEventListener('pointercancel', release);
+    btn.addEventListener('contextmenu', e => e.preventDefault());
+  });
+
+  // ===== 进站键：直接切换进站请求，不再二次确认 =====
+  if (btnPit) {
+    btnPit.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      if (!ws || ws.readyState !== 1) return;
+      // 发送明确目标状态；显示以主机回传为准，避免旧状态帧造成闪烁或误取消。
+      const next = !pitRequested;
+      const lbl = btnPit.querySelector('.lbl');
+      if (lbl) lbl.textContent = t(next ? '请求中…' : '取消中…');
+      ws.send(JSON.stringify({ role: 'pit', player, requested: next }));
+      if (navigator.vibrate) navigator.vibrate(12);
+    });
+    btnPit.addEventListener('contextmenu', e => e.preventDefault());
+  }
+
+  // ===== 换胎选择：5 种胎按钮，点击发送 pitTyre 给主机 =====
+  document.querySelectorAll('.pit-tyre-btn').forEach(btn => {
+    btn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      if (!ws || ws.readyState !== 1) return;
+      const tyre = btn.dataset.tyre;
+      ws.send(JSON.stringify({ role: 'pitTyre', player, tyre }));
+      // 本地即时反馈：高亮所选胎（主机下一帧会切到服务阶段校正）
+      document.querySelectorAll('.pit-tyre-btn').forEach(b => b.classList.remove('picked'));
+      btn.classList.add('picked');
+      if (navigator.vibrate) navigator.vibrate(15);
+    });
+    btn.addEventListener('contextmenu', e => e.preventDefault());
+  });
+
+  // ===== 全屏按钮（Android/桌面立即生效）=====
+  const fsBtn = document.getElementById('fullscreenBtn');
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement) ||
+           (window.innerWidth === screen.width && window.innerHeight === screen.height);
+  }
+  function requestFullscreen() {
+    const el = document.documentElement;
+    const fn = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitEnterFullscreen;
+    if (fn) fn.call(el).catch?.(() => {});
+  }
+  fsBtn.addEventListener('click', requestFullscreen);
+  document.addEventListener('fullscreenchange', () => {
+    fsBtn.classList.toggle('hidden-fullscreen', !!document.fullscreenElement);
+  });
+
+  // ===== 添加到主屏幕引导 =====
+  const isStandalone = window.matchMedia('(display-mode: fullscreen)').matches ||
+                       window.matchMedia('(display-mode: standalone)').matches ||
+                       window.navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const hint = document.getElementById('installHint');
+  const hintText = document.getElementById('hintText');
+
+  // 引导文案按平台设置（语言可切换）
+  function setHintText() {
+    if (isIOS) hintText.textContent = t('分享 → 添加到主屏幕 · 全屏无浏览器栏');
+    else if (isAndroid) hintText.textContent = t('菜单 ⋮ → 添加到主屏幕 · 全屏无浏览器栏');
+    else hintText.textContent = t('添加到主屏幕 · 全屏无浏览器栏');
+  }
+  // 已是全屏/独立模式 → 不提示
+  if (isStandalone) {
+    fsBtn.classList.add('hidden-fullscreen');
+  } else {
+    setHintText();
+    // 延迟弹出，避免抢走首次焦点
+    setTimeout(() => hint.classList.add('show'), 1200);
+  }
+  document.getElementById('hintClose').onclick = () => hint.classList.remove('show');
+
+  // Chrome 支持 beforeinstallprompt，直接弹安装提示
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+  hint.addEventListener('click', (e) => {
+    if (e.target.id === 'hintClose') return;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt = null;
+      hint.classList.remove('show');
+    }
+  });
+
+  // ===== 语言切换 =====
+  const langBtn = document.getElementById('langBtn');
+  function applyLang() {
+    if (connText) connText.textContent = connected ? t('已连接') : reconnecting ? t('重连中…') : t('未连接');
+    if (btnPit) {
+      const lbl = btnPit.querySelector('.lbl');
+      if (lbl) lbl.textContent = pitRequested ? t('已请求') : t('进站');
+    }
+    if (lastState) updateDisplay(lastState);
+    else if (lapEl) lapEl.textContent = t('第 {lap}/{total} 圈 · {time} · 最佳 {best}', { lap: 0, total: '?', time: '--', best: '--' });
+    setHintText();
+    const appTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (appTitle) appTitle.content = t('Mini GP 手柄');
+  }
+  if (langBtn) {
+    langBtn.textContent = langButtonLabel();
+    langBtn.addEventListener('click', () => setLang(isZh() ? 'en' : 'zh'));
+  }
+  onLangChange(() => {
+    if (langBtn) langBtn.textContent = langButtonLabel();
+    applyLang();
+  });
+  applyLang();
+
+  // 防止页面滑动/双击缩放
+  document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+  document.addEventListener('gesturestart', e => e.preventDefault());
+  document.addEventListener('dblclick', e => e.preventDefault());
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mini Grand Prix · 2026 赛车设计</title>
+  <style>
+    :root{--ink:#292a32;--paper:#fff8e7;--sky:#9be7ff;--red:#e84545;--yellow:#ffd23f}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#64c9e8;color:var(--ink)}
+    body{font-family:"Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 72% 5%,#e5fbff 0 3%,transparent 30%),linear-gradient(135deg,transparent 0 48%,rgba(255,255,255,.16) 48% 50%,transparent 50% 100%);background-size:auto,44px 44px}
+    main{position:relative;width:min(1240px,94vw);margin:32px auto 64px}
+    header{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-bottom:24px;padding:28px 32px;background:var(--paper);border:4px solid var(--ink);border-radius:28px;box-shadow:0 12px 0 var(--ink)}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:var(--red);color:white;border:3px solid var(--ink);border-radius:10px;font-size:11px;letter-spacing:2px;box-shadow:0 3px 0 var(--ink)}
+    h1{margin:14px 0 2px;font-size:clamp(34px,5vw,68px);line-height:.9;letter-spacing:-3px;text-transform:uppercase}
+    h1 span{display:block;color:#3a86ff;text-shadow:3px 3px 0 var(--ink);-webkit-text-stroke:1px var(--ink)}
+    .intro{max-width:600px;margin:14px 0 0;color:#676872;font-size:13px;line-height:1.6;font-weight:700}
+    .spec{min-width:175px;padding:14px 16px;background:var(--yellow);border:3px solid var(--ink);border-radius:16px;box-shadow:0 5px 0 var(--ink);transform:rotate(2deg)}
+    .spec b{display:block;font-size:22px}.spec small{font-size:10px;letter-spacing:1.5px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    article{position:relative;min-width:0;overflow:hidden;background:var(--paper);border:4px solid var(--ink);border-radius:24px;box-shadow:0 9px 0 var(--ink);transition:transform .16s,box-shadow .16s}
+    article:hover{transform:translateY(-5px);box-shadow:0 14px 0 var(--ink)}
+    .stage{position:relative;height:430px;overflow:hidden;background:linear-gradient(150deg,var(--team-soft),#fff 68%)}
+    .stage:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 31px,rgba(41,42,50,.06) 31px 33px),repeating-linear-gradient(0deg,transparent 0 31px,rgba(41,42,50,.06) 31px 33px);transform:rotate(-8deg) scale(1.15)}
+    canvas{position:relative;display:block;width:100%;height:100%}
+    .meta{position:relative;display:flex;align-items:center;gap:13px;padding:15px 17px 17px;border-top:4px solid var(--ink);background:var(--paper)}
+    .number{display:grid;place-items:center;width:47px;height:47px;flex:0 0 auto;background:var(--team);color:var(--number);border:3px solid var(--ink);border-radius:13px;box-shadow:0 4px 0 var(--ink);font-size:21px;font-style:italic}
+    h2{margin:0;font-size:17px;letter-spacing:.5px}.code{margin-top:2px;color:#83838c;font-size:9px;font-weight:900;letter-spacing:2px}
+    .stripe{position:absolute;right:16px;top:15px;width:42px;height:8px;background:var(--accent);border:2px solid var(--ink);border-radius:8px;transform:skewX(-22deg)}
+    footer{margin-top:28px;text-align:center;font-size:10px;font-weight:900;letter-spacing:2px;color:#246c82}
+    @media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:650px){main{margin-top:18px}.grid{grid-template-columns:1fr}header{grid-template-columns:1fr;padding:23px}.spec{display:none}.stage{height:400px}h1{letter-spacing:-2px}}
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div><span class="eyebrow">MG-26 · TOP VIEW SERIES</span><h1>Mini Grand Prix <span>六队赛车设计</span></h1><p class="intro">参考现代方程式赛车的俯视空气动力学轮廓，以项目原有 40:82 的车体比例重新设计。统一底盘、六套独立识别涂装，适配游戏内的小尺寸显示。</p></div>
+    <div class="spec"><small>GAME SCALE</small><b>40 × 82</b><small>WIDTH / LENGTH</small></div>
+  </header>
+  <section class="grid" id="grid"></section>
+  <footer>ORIGINAL CANVAS DESIGN · NO EXISTING CAR RENDERER IMPORTED</footer>
+</main>
+<script>
+const teams=[
+ {name:'VECTOR',code:'COBALT BREEZE',  no:'12',base:'#4a6fa5',dark:'#1f3556',accent:'#c9d6df',soft:'#d6e2f0',num:'#fff'},
+ {name:'APEX',  code:'SAFFRON DUNE',   no:'23',base:'#d4a017',dark:'#3a2c0a',accent:'#fff2a8',soft:'#f3e4b3',num:'#111'},
+ {name:'HELIX',code:'INDIGO BLOOM',    no:'36',base:'#4b0082',dark:'#1d0034',accent:'#e6e6fa',soft:'#dccdf5',num:'#fff'},
+ {name:'ORBIT', code:'VERMILION DUSK', no:'17',base:'#e34234',dark:'#3a0e0a',accent:'#fff5e6',soft:'#f6cfc6',num:'#fff'},
+ {name:'PULSE', code:'TEAL TIDE',      no:'88',base:'#008080',dark:'#003232',accent:'#ffffff',soft:'#b8e1e1',num:'#fff'},
+ {name:'PRISM', code:'ONYX MIRROR',    no:'6', base:'#1a1a1a',dark:'#000000',accent:'#c0c0c0',soft:'#9e9e9e',num:'#c0c0c0'}
+];
+
+const grid=document.querySelector('#grid');
+for(const team of teams){
+ const card=document.createElement('article');
+ card.style.cssText=`--team:${team.base};--team-soft:${team.soft};--accent:${team.accent};--number:${team.num}`;
+ card.innerHTML=`<div class="stage"><canvas aria-label="${team.name} #${team.no} 俯视赛车"></canvas></div><div class="meta"><div class="number">${team.no}</div><div><h2>${team.name}</h2><div class="code">${team.code}</div></div><i class="stripe"></i></div>`;
+ grid.append(card);draw(card.querySelector('canvas'),team);
+}
+
+function path(ctx,points,fill,stroke='#292a32',width=2){ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke()}}
+function capsule(ctx,x,y,w,h,r,fill,stroke='#292a32',lw=2){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke()}}
+function draw(canvas,t){
+ const dpr=Math.min(devicePixelRatio||1,2),rect=canvas.getBoundingClientRect();canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;
+ const c=canvas.getContext('2d');c.scale(dpr,dpr);c.translate(rect.width/2,rect.height/2+3);const s=Math.min(rect.width/190,rect.height/250);c.scale(s,s);
+ // Ground shadow — original game ratio: visual envelope 84 × 172 (≈ 40 × 82).
+ c.save();c.filter='blur(9px)';c.fillStyle='rgba(20,24,35,.25)';c.beginPath();c.ellipse(5,7,39,83,0,0,Math.PI*2);c.fill();c.restore();
+ // Carbon floor and diffuser.
+ path(c,[[-12,-53],[-27,-19],[-31,44],[-20,73],[20,73],[31,44],[27,-19],[12,-53]],t.dark,null);
+ path(c,[[-22,49],[-35,72],[-13,68],[0,60],[13,68],[35,72],[22,49]],'#15171b',null);
+ // Wishbones, deliberately exposed like the reference car.
+ c.strokeStyle='#24262c';c.lineWidth=4;c.lineCap='round';for(const side of[-1,1]){c.beginPath();c.moveTo(side*8,-49);c.lineTo(side*34,-58);c.moveTo(side*10,-39);c.lineTo(side*34,-54);c.moveTo(side*20,40);c.lineTo(side*35,50);c.moveTo(side*19,51);c.lineTo(side*35,57);c.stroke()}
+ // Tires with bright compound bands.
+ for(const [x,y,w,h] of [[-37,-53,14,29],[37,-53,14,29],[-38,52,17,34],[38,52,17,34]]){capsule(c,x-w/2,y-h/2,w,h,5,'#141519','#292a32',2);c.strokeStyle=t.accent;c.lineWidth=1.5;c.beginPath();c.moveTo(x-w*.28,y-h*.38);c.lineTo(x-w*.28,y+h*.38);c.moveTo(x+w*.28,y-h*.38);c.lineTo(x+w*.28,y+h*.38);c.stroke()}
+ // Multi-element front wing and endplates.
+ path(c,[[-4,-78],[-42,-76],[-46,-67],[-7,-69]],t.base);path(c,[[4,-78],[42,-76],[46,-67],[7,-69]],t.base);
+ c.strokeStyle=t.accent;c.lineWidth=3;c.beginPath();c.moveTo(-43,-72);c.lineTo(-8,-73);c.moveTo(43,-72);c.lineTo(8,-73);c.stroke();
+ path(c,[[-46,-77],[-42,-78],[-41,-64],[-46,-63]],t.dark);path(c,[[46,-77],[42,-78],[41,-64],[46,-63]],t.dark);
+ // Sculpted central shell: new geometry, long spear nose + undercut sidepods.
+ path(c,[[0,-82],[6,-54],[12,-31],[27,-17],[29,14],[23,42],[13,64],[-13,64],[-23,42],[-29,14],[-27,-17],[-12,-31],[-6,-54]],t.base);
+ path(c,[[-5,-48],[-11,-22],[-23,-8],[-22,13],[-13,5],[-8,-21]],t.accent,null);path(c,[[5,-48],[11,-22],[23,-8],[22,13],[13,5],[8,-21]],t.accent,null);
+ // Team-specific livery language.
+ if(t.name==='VECTOR'){path(c,[[-3,-76],[3,-76],[6,59],[-6,59]],t.dark,null);c.strokeStyle=t.accent;c.lineWidth=3;c.beginPath();c.moveTo(-19,-8);c.quadraticCurveTo(-27,24,-15,55);c.moveTo(19,-8);c.quadraticCurveTo(27,24,15,55);c.stroke()}
+ else if(t.name==='APEX'){path(c,[[-6,-75],[1,-80],[5,58],[-5,58]],'#ffe8cf',null);path(c,[[-25,12],[-16,5],[-12,53],[-20,40]],t.dark,null);path(c,[[25,12],[16,5],[12,53],[20,40]],t.dark,null)}
+ else if(t.name==='HELIX'){path(c,[[-7,-69],[0,-82],[9,-34],[4,58],[-5,58]],t.accent,null);path(c,[[-25,7],[-13,-5],[-11,47],[-20,34]],'#e52b31',null)}
+ else if(t.name==='ORBIT'){path(c,[[-6,-75],[5,-75],[8,-26],[2,60],[-7,60]],t.dark,null);c.strokeStyle=t.accent;c.lineWidth=3;c.beginPath();c.moveTo(-24,7);c.lineTo(-14,48);c.moveTo(24,7);c.lineTo(14,48);c.stroke()}
+ else if(t.name==='PULSE'){c.strokeStyle=t.accent;c.lineWidth=4;c.beginPath();c.moveTo(0,-78);c.lineTo(0,58);c.moveTo(-24,8);c.quadraticCurveTo(-27,35,-13,57);c.moveTo(24,8);c.quadraticCurveTo(27,35,13,57);c.stroke()}
+ else{path(c,[[-5,-77],[2,-81],[7,-24],[2,61],[-6,61]],t.accent,null);path(c,[[-24,8],[-14,-2],[-12,53],[-21,35]],'#f4f7ff',null)}
+ // Air intakes, cockpit, driver helmet and halo.
+ path(c,[[-27,-9],[-16,-14],[-14,6],[-24,10]],'#11151a',null);path(c,[[27,-9],[16,-14],[14,6],[24,10]],'#11151a',null);
+ c.beginPath();c.ellipse(0,13,11,24,0,0,Math.PI*2);c.fillStyle='#11161d';c.fill();c.strokeStyle='#292a32';c.lineWidth=2;c.stroke();
+ c.beginPath();c.arc(0,5,8,0,Math.PI*2);c.fillStyle=t.accent;c.fill();c.strokeStyle='#fff';c.lineWidth=2;c.stroke();
+ c.strokeStyle='#e8edf1';c.lineWidth=3;c.beginPath();c.arc(0,8,14,Math.PI*.95,Math.PI*2.05);c.moveTo(0,-5);c.lineTo(0,22);c.stroke();
+ // Engine spine, rear wing, rain light.
+ c.strokeStyle='rgba(255,255,255,.72)';c.lineWidth=1.5;c.beginPath();c.moveTo(0,31);c.lineTo(0,61);c.stroke();
+ capsule(c,-40,68,80,10,3,t.dark,'#292a32',2);capsule(c,-43,66,5,17,2,t.base);capsule(c,38,66,5,17,2,t.base);
+ c.fillStyle=t.accent;c.fillRect(-31,71,62,2);c.fillStyle='#ff3945';c.fillRect(-2,79,4,4);
+ // Number remains readable at actual in-game scale.
+ c.save();c.translate(0,-38);c.rotate(-.03);c.font='900 13px Arial';c.textAlign='center';c.textBaseline='middle';c.lineWidth=3;c.strokeStyle=t.dark;c.strokeText(t.no,0,0);c.fillStyle='#fff';c.fillText(t.no,0,0);c.restore();
+}
+addEventListener('resize',()=>document.querySelectorAll('canvas').forEach((canvas,i)=>draw(canvas,teams[i])));
+</script>
+</body>
+</html>
