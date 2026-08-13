@@ -19,6 +19,12 @@
   <img src="https://img.shields.io/badge/Build-none-19c37d?style=for-the-badge" alt="No build step" />
 </p>
 
+<p align="center">
+  <a href="https://xhhdaxx.github.io/Mini-Grand-Prix/"><img src="https://img.shields.io/badge/▶_在线试玩-浏览器直接玩-22c55e?style=for-the-badge&logo=googlechrome&logoColor=white" alt="在浏览器里直接玩 Mini Grand Prix" /></a>
+  <br>
+  <sub>免安装、免登录，点开链接就能开赛。键盘模式完全可在浏览器运行；手机手柄模式仍需本地执行 <code>npm run start:gamepad</code>。</sub>
+</p>
+
 <a href="https://xhhdaxx.github.io/Mini-Grand-Prix/showcase/gameplay.html"><img src="Web_Pictures_Material/CN/1-home.png" width="100%" alt="打开自动播放的 Mini Grand Prix 视频展示页" /></a>
 
 如果你喜欢“容易上手，但每一圈都有决策”的赛车游戏，欢迎点一个 **Star ⭐**。

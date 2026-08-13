@@ -19,6 +19,12 @@ No game engine, no frontend framework, no build step—just driving, tyres, weat
   <img src="https://img.shields.io/badge/Build-none-19c37d?style=for-the-badge" alt="No build step" />
 </p>
 
+<p align="center">
+  <a href="https://xhhdaxx.github.io/Mini-Grand-Prix/"><img src="https://img.shields.io/badge/▶_PLAY_DEMO-Play_in_browser-22c55e?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Play the browser demo" /></a>
+  <br>
+  <sub>No install, no signup — open the link and race. Keyboard mode runs in the browser; phone-controller mode still needs <code>npm run start:gamepad</code> locally.</sub>
+</p>
+
 <a href="https://xhhdaxx.github.io/Mini-Grand-Prix/showcase/gameplay.html"><img src="Web_Pictures_Material/EN/1-home.png" width="100%" alt="Open the autoplaying Mini Grand Prix gameplay showcase" /></a>
 
 If you enjoy racing games that are easy to pick up but make every lap a decision, consider leaving a **Star ⭐**.
