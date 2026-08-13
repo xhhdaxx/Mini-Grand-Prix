@@ -25,9 +25,7 @@
 - [五、2026 赛历：24 站 + 6 支虚构车队](#五2026-赛历24-站--6-支虚构车队)
 - [六、每一圈都是一次决策](#六每一圈都是一次决策)
 - [七、3 分钟跑起来](#七3-分钟跑起来)
-- [八、项目结构](#八项目结构)
-- [九、参与贡献与联系作者](#九参与贡献与联系作者)
-- [📌 掘金读者增补段：技术实现深挖](#-掘金读者增补段技术实现深挖)
+- [八、参与贡献与联系作者](#八参与贡献与联系作者)
 - [📌 CSDN / 博客园读者增补段：项目定位与故事](#-csdn--博客园读者增补段项目定位与故事)
 - [📍 三平台发布提示](#-三平台发布提示)
 
@@ -61,27 +59,15 @@
 
 | 维度 | 数值 |
 |:---|:---|
-| **运行时依赖** | 1 个（`ws`，仅手机手柄模式需要） |
-| **构建步骤** | 0 |
-| **JS 源码行数** | ~6300 行 |
-| **最大单文件** | `src/game/track.js`（2268 行，全部 24 条赛道几何数据） |
 | **支持语言** | 简体中文 / English（运行时切换） |
 | **赛道数量** | 24 条（覆盖亚太 / 欧洲 / 美洲 / 中东） |
-| **车队数量** | 6 支（全部虚构） |
-| **测试体系** | Node.js 全量功能测试 + Playwright 浏览器冒烟测试 |
+| **车队数量** | 6 支（全部虚构，性能倾向各异） |
+| **同场赛车** | 6 辆（玩家 + 5 辆 AI 公平对抗） |
+| **玩法模式** | 大奖赛周末 / 单人计时 / 手机双人分屏 |
+| **轮胎配方** | 5 种（软、中性、硬、半雨、全雨） |
+| **天气类型** | 晴 / 阴 / 雨 / 可预报的动态天气 |
 
-### 技术栈一览
-
-| 它**没有**的东西 | 它**用了**的东西 |
-|:---|:---|
-| ❌ 游戏引擎（Phaser / Pixi / Three.js） | ✅ 浏览器原生 **Canvas 2D** |
-| ❌ 前端框架（React / Vue / Svelte） | ✅ 原生 **ES Modules** |
-| ❌ 构建工具（Vite / Webpack / Rollup） | ✅ `<script type="module">` 直接加载 |
-| ❌ TypeScript / Babel | ✅ 原生 JavaScript |
-| ❌ 状态管理库 | ✅ 自写状态机 |
-| ❌ npm 全家桶（运行时只有一个 `ws`） | ✅ Node.js 18+ 内置能力 |
-
-**带来的直接好处**：`git clone` → `npm install` → `npm run start:keyboard` → 浏览器打开。**没有打包步骤，源码即运行码**，浏览器开发者工具里看到的就是源码本身。
+> 💡 **一句话亮点**：纯前端、零安装、零账号 —— 浏览器原生 ES Modules + Canvas 2D，点开链接就能开赛。
 
 ---
 
@@ -281,54 +267,7 @@ npm run start:gamepad
 
 ---
 
-## 八、项目结构
-
-```text
-浏览器原生 ES Modules
-├── Canvas 2D          赛道、赛车、环境与 HUD
-├── localStorage       成绩、生涯、设置与赛季进度（容错读写）
-└── Node.js + ws       本地静态服务 + 可选的手机手柄 WebSocket 通道
-```
-
-### 关键文件分布
-
-```text
-index.html                       页面入口与界面样式
-gamepad.html                     手机手柄页面
-src/
-├── main.js                      游戏循环与流程编排（302 行）
-├── state-machine.js             比赛状态机
-├── i18n.js                      中英文界面文案
-├── game/                        游戏核心
-│   ├── car.js                   车辆控制、物理与碰撞（452 行）
-│   ├── ai.js                    AI 驾驶（263 行）
-│   ├── race-flow.js             排位/正赛/计时/双人流程（867 行）
-│   ├── race-systems.js          ERS / 天气 / 轮胎 / 比赛控制 / 维修区规则
-│   ├── track.js                 赛道与维修区几何（2268 行 ⭐）
-│   ├── track-meta.js            24 站赛历与本地化元数据
-│   ├── teams.js / teams-data.js 车队配置
-│   └── vehicle-config.js        车型预设与性能调校
-├── renderer/                    渲染层（赛道 / 赛车 / HUD / 场景）
-├── ui/                          菜单与 3D 地球选站
-├── gamepad/                     手机手柄 WebSocket 客户端
-└── utils/                       键盘 / 数学 / 存档 / 导出工具
-server.js                        本地服务 + WebSocket 中继
-tests/run.js                     Node.js 全量功能测试
-tests/smoke.mjs                  Playwright 浏览器冒烟测试
-docs/                            产品文档 / 赛道规范 / 复盘
-```
-
-### 测试体系
-
-```bash
-npm test          # 全量功能测试（车辆/比赛/轮胎/ERS/天气/赛道/存档/本地化）
-npm run lint      # ESLint 静态检查
-npm run smoke     # Playwright 浏览器冒烟测试
-```
-
----
-
-## 九、参与贡献与联系作者
+## 八、参与贡献与联系作者
 
 ### 🤝 欢迎这样参与
 
@@ -361,173 +300,6 @@ npm run smoke     # Playwright 浏览器冒烟测试
 本项目与 Formula 1、FIA 或任何现实赛事、车队、车手、车辆制造商、赛道运营方**均无隶属、授权、赞助或背书关系**。所有车队、车号、涂装均为虚构内容。3D 地球陆地数据来自 [Natural Earth](https://www.naturalearthdata.com/)（Public Domain）。完整第三方版权说明见 [`THIRD_PARTY_NOTICES.md`](https://github.com/xhhdaxx/Mini-Grand-Prix/blob/main/THIRD_PARTY_NOTICES.md)。
 
 项目自有源代码使用 [MIT License](https://github.com/xhhdaxx/Mini-Grand-Prix/blob/main/LICENSE) 开源。
-
----
-
-# 📌 掘金读者增补段：技术实现深挖
-
-> 📖 **这一段是给掘金读者的"技术增补"**。如果你要在掘金发布，把这一段保留；如果在 CSDN / 博客园发布，可以删除这一段。
->
-> 掘金社区偏好**有代码、有架构、有性能数据**的硬核技术内容，所以这一段会深入聊实现细节。
-
-## 整体架构图
-
-```text
-┌──────────────────────────────────────────────────────────┐
-│                    浏览器原生 ES Modules                   │
-│                                                            │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │
-│  │  Canvas 2D   │  │ localStorage │  │   WebSocket  │    │
-│  │              │  │              │  │   (原生 API)  │    │
-│  │  赛道渲染    │  │  成绩/生涯    │  │  手机手柄通信  │    │
-│  │  赛车渲染    │  │  设置/赛季    │  │  双人分屏同步  │    │
-│  │  环境装饰    │  │  (容错读写)   │  │              │    │
-│  │  HUD         │  │              │  │              │    │
-│  └──────────────┘  └──────────────┘  └──────────────┘    │
-└──────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌──────────────────────────────────────────────────────────┐
-│              Node.js 18+ (本地开发服务)                    │
-│                                                            │
-│   • 静态文件服务 (http)                                    │
-│   • WebSocket 中继 (ws 库，唯一运行时依赖)                  │
-│   • 二维码生成 (二维码用于手机扫码连接)                      │
-└──────────────────────────────────────────────────────────┘
-```
-
-## 三个值得展开的技术决策
-
-### 1️⃣ 用 Canvas 2D 手搓一颗 3D 地球
-
-主菜单右侧那颗可拖动旋转的 3D 地球，**没有用 WebGL / Three.js**。实现思路：
-
-```text
-1. 从 world.geojson (96 KB) 读取陆地多边形 (Natural Earth Public Domain)
-                ↓
-2. 球面投影：3D 经纬度 → 2D 画布坐标
-                ↓
-3. 自定义裁剪：剔除地球背面的多边形
-                ↓
-4. 鼠标拖动改变相机经纬度 → 每帧重绘
-                ↓
-5. 赛道点用真实经纬度反投影到地球表面
-   靠近边缘时自动淡出，避免视觉拉伸
-```
-
-核心投影代码骨架：
-
-```javascript
-function latLonToVec3(lat, lon, radius = 1) {
-    const phi = (90 - lat) * Math.PI / 180;
-    const theta = (lon + 180) * Math.PI / 180;
-    return {
-        x: -radius * Math.sin(phi) * Math.cos(theta),
-        y:  radius * Math.cos(phi),
-        z:  radius * Math.sin(phi) * Math.sin(theta),
-    };
-}
-
-function project(point, cameraYaw, cameraPitch) {
-    const yawed = rotateY(point, cameraYaw);
-    const pitched = rotateX(yawed, cameraPitch);
-    if (pitched.z < 0) return null;        // 只渲染朝向相机的一面
-    return {
-        x: pitched.x * SCALE + CENTER_X,
-        y: pitched.y * SCALE + CENTER_Y,
-    };
-}
-```
-
-**性能数据**：~4000 个陆地多边形，首屏 ~50ms，后续帧 ~5ms（脏区域重绘），稳定 60 FPS。
-
-### 2️⃣ AI 共享物理：不开挂的对抗
-
-`src/game/ai.js`（263 行）最重要的设计原则：
-
-> **AI 必须和玩家共享同一套车辆物理、轮胎、ERS、维修区规则。**
-
-| 不允许的"作弊 AI"行为 | 我们的做法 |
-|:---|:---|
-| ❌ AI 轮胎不磨损 | ✅ AI 和玩家一样的磨损曲线 |
-| ❌ AI 油门永远满 | ✅ 基于目标圈速动态调节 |
-| ❌ AI 弯道速度无上限 | ✅ 受同样的抓地力限制 |
-| ❌ AI 不需要进站 | ✅ AI 必须强制换胎，未完成同样加罚 20 秒 |
-
-难度参数**只调"目标圈速"和"激进度"**：
-
-```javascript
-class AIDriver {
-    constructor(car, targetLapTime, aggression) {
-        this.car = car;                              // 和玩家完全相同的 Car 类
-        this.targetLapTime = targetLapTime;          // 难度只调这一个
-        this.aggression = aggression;
-    }
-
-    decide(input) {
-        // 转向：参考线点
-        const target = this.findRacingLinePoint();
-        input.steer = clamp(angleTo(this.car.position, target) * 2, -1, 1);
-
-        // 油门：当前圈速 vs 目标圈速
-        input.throttle = this.car.currentLapTime < this.targetLapTime ? 0.95 : 1.0;
-
-        // ERS：直道放电
-        if (this.isOnStraight()) input.deploy = true;
-
-        // 进站：基于轮胎磨损
-        if (this.car.tyres.wear > 0.7) input.requestPit = true;
-    }
-}
-```
-
-**有意思的细节**：早期 AI 按照理论最优路径驾驶，玩家根本追不上。后来在 AI 决策里加入少量噪声（转向 ±2%、油门 ±3%），让 AI 偶尔犯错，玩家才有机会超越。
-
-### 3️⃣ localStorage 容错：把存档当"陌生人输入"
-
-所有进度（最佳成绩、最近比赛、车辆设置、赛季进度）都存在 `localStorage`。**关键原则**：
-
-> **localStorage 永远不是可信输入。** 用户可能清缓存、可能跨域名访问、可能存档损坏、可能 Safari 隐私模式直接抛 `QuotaExceededError`。
-
-需要处理的破坏场景：
-
-| 破坏场景 | 处理方式 |
-|:---|:---|
-| JSON 解析失败 | 回退到默认值 |
-| 字段类型不对（数字变字符串） | 类型校验 + 强制转换 |
-| 嵌套对象缺失 | 递归补全默认值 |
-| 数组长度变化 | 截断或补齐 |
-| 版本号字段缺失 / 过期 | 自动迁移到新版本 |
-| Safari 隐私模式写入抛异常 | try-catch + 回退到内存 `Map` |
-
-每一条都有专门的测试覆盖，确保任何破坏场景都不会让游戏崩溃。
-
-## 性能数据
-
-### 桌面浏览器（Chrome 130，M1 MacBook Pro）
-
-| 场景 | 帧率 | 内存 |
-|:---|:---:|:---:|
-| 主菜单（3D 地球旋转） | 60 FPS | 80 MB |
-| 排位赛（单车） | 60 FPS | 95 MB |
-| 正赛（6 车 + HUD） | 60 FPS | 110 MB |
-| 雨天（粒子效果） | 55-60 FPS | 120 MB |
-
-### 性能优化关键点
-
-1. **脏区域重绘**：Canvas 2D 不全屏清空，只重绘变化区域
-2. **离屏 Canvas 缓存**：3D 地球的陆地多边形渲染到离屏 Canvas，主 Canvas 只做 blit
-3. **物理帧率与渲染帧率解耦**：物理用固定步长 60Hz，渲染跟着 requestAnimationFrame
-4. **AI 决策降频**：AI 不需要每帧都做决策，每 100ms 决策一次足够
-
-## 测试设计原则
-
-1. **核心层无 DOM 依赖**：`src/game/` 下的所有逻辑都可以在 Node.js 里直接测试
-2. **容错优先**：localStorage 的每一种破坏场景都有专门的测试
-3. **AI 长时间模拟**：测试入口包含一个"AI 三圈完赛 + 强制进站"的长模拟
-4. **浏览器冒烟测试**：用 Playwright 启动真实浏览器，加载页面，校验控制台无启动错误
-
-整个项目**没有任何"CI 一下就绿，真机上就崩"的情况** —— 每次改动都跑实际浏览器冒烟测试。
 
 ---
 
@@ -644,18 +416,16 @@ class AIDriver {
 
 ## 三个平台各自的发布建议
 
+> 📌 **三平台现在共用同一份正文**，没有"掘金版 / CSDN 版"的差异。下面的"📌 CSDN / 博客园读者增补段"对三个平台都适用（项目展示 + 视觉冲击 + 路线图）—— 它本质上是"项目故事增补段"，掘金读者也会喜欢。可以直接保留全文发布，不需要再删任何段落。
+
 ### 🥇 掘金
 
-- **保留**：「📌 掘金读者增补段：技术实现深挖」
-- **删除**：「📌 CSDN / 博客园读者增补段：项目定位与故事」
 - **推荐标签**：`前端`、`JavaScript`、`Canvas`、`游戏开发`、`开源项目`
 - **推荐封面**：`Web_Pictures_Material/CN/1-home.png`
 - **掘金编辑器**对 markdown 支持最好，可以保留所有 `<details>`、复杂表格、HTML 标签
 
 ### 🥈 CSDN
 
-- **保留**：「📌 CSDN / 博客园读者增补段：项目定位与故事」
-- **删除**：「📌 掘金读者增补段：技术实现深挖」
 - **推荐标签**：`前端`、`JavaScript`、`HTML5`、`Canvas`、`游戏开发`、`开源项目`
 - **推荐封面**：`Web_Pictures_Material/CN/1-home.png`
 - **推荐专栏**：可以新建一个"独立开源项目"专栏
@@ -663,8 +433,6 @@ class AIDriver {
 
 ### 🥉 博客园（cnblogs）
 
-- **保留**：「📌 CSDN / 博客园读者增补段：项目定位与故事」
-- **删除**：「📌 掘金读者增补段：技术实现深挖」（或保留也行）
 - **推荐分类**：`前端`、`JavaScript`
 - **博客园 markdown 支持较基础**，建议：
   - 把所有 `<details>` 展开成普通段落
